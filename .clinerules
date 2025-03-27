@@ -1,0 +1,93 @@
+# HeadlessViewComponent Project Intelligence
+
+## Project Patterns
+1. **Documentation First**
+   - Always update memory bank files before making significant changes
+   - Keep documentation in sync with code changes
+   - Use clear, concise language in documentation
+
+2. **Component Development**
+   - Follow ViewComponent best practices
+   - Maintain headless pattern principles
+   - Keep logic separate from presentation
+   - Write tests before implementation
+
+3. **Code Style**
+   - Follow Ruby style guide
+   - Use Rubocop for consistency
+   - Keep methods focused and small
+   - Document public APIs
+
+## User Preferences
+1. **Development Workflow**
+   - Test-driven development
+   - Regular documentation updates
+   - Clear commit messages
+   - Incremental feature development
+
+2. **Communication Style**
+   - Clear and concise
+   - Technical but accessible
+   - Proactive about documentation
+   - Open to feedback
+
+3. **Project Management**
+   - Regular progress updates
+   - Clear milestone tracking
+   - Transparent decision making
+   - Community-focused development
+
+## Critical Implementation Paths
+1. **Component Creation**
+   - Inherit from HeadlessComponent
+   - Define logic layer
+   - Create presentation layer
+   - Write tests
+   - Document usage
+
+2. **Testing Approach**
+   - Unit tests for logic
+   - Integration tests for components
+   - Documentation tests
+   - Performance tests
+
+3. **Documentation Updates**
+   - Update relevant memory bank files
+   - Keep README current
+   - Document API changes
+   - Add usage examples
+
+## Known Challenges
+1. **Technical**
+   - Maintaining Rails compatibility
+   - Performance optimization
+   - Complex component scenarios
+
+2. **Documentation**
+   - Keeping examples current
+   - API documentation maintenance
+   - Usage pattern documentation
+
+3. **Development**
+   - Test coverage maintenance
+   - CI/CD pipeline stability
+   - Dependency management
+
+## Project Evolution
+1. **Architecture Decisions**
+   - Document in systemPatterns.md
+   - Explain rationale
+   - Consider alternatives
+   - Update as needed
+
+2. **Feature Development**
+   - Track in progress.md
+   - Update activeContext.md
+   - Document in productContext.md
+   - Consider impact on patterns
+
+3. **Tool Usage**
+   - Document in techContext.md
+   - Keep dependencies current
+   - Monitor performance
+   - Update as needed 
