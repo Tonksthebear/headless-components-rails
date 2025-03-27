@@ -1,0 +1,13 @@
+<div class="<%= yass(menu: :items) %>" 
+     data-headless--menu-target="items"
+     data-transition="enter"
+     data-enter="<%= yass(menu: { transition: :enter }) %>"
+     data-enter-from="<%= yass(menu: { transition: :enter_from }) %>"
+     data-enter-to="<%= yass(menu: { transition: :enter_to }) %>"
+     data-leave="<%= yass(menu: { transition: :leave }) %>"
+     data-leave-from="<%= yass(menu: { transition: :leave_from }) %>"
+     data-leave-to="<%= yass(menu: { transition: :leave_to }) %>">
+     <% items.each do |item| %>
+      <%= item %>
+     <% end %>
+</div> 
