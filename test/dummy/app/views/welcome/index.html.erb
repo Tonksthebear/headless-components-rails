@@ -1,0 +1,10 @@
+<h1>Welcome to Headless View Component Demo</h1>
+
+<div class="mt-8">
+  <h2>Menu Component Demo</h2>
+  <%= render Headless::MenuComponent.new(open: true) do %>
+    <div class="p-4 bg-white shadow rounded-lg">
+      <p>This is a menu component content</p>
+    </div>
+  <% end %>
+</div> 

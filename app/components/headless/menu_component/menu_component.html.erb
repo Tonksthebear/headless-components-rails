@@ -1,0 +1,10 @@
+<div class="<%= yass(:menu) %>" data-controller="headless--menu">
+  <%= button %>
+  <%= render Headless::Menu::ItemsComponent.new do |items_component| %>
+    <% items.each do |item| %>
+      <% items_component.with_item do %>
+        <%= item %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div> 
