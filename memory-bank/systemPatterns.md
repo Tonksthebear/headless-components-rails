@@ -69,3 +69,49 @@ graph TD
 2. Presentation layer implementations
 3. Logic layer extensions
 4. Integration adapters 
+
+## ViewComponent Styling Pattern
+
+### YAML Structure
+Component styles are defined in a YAML file named after the component (e.g., `menu_component.yml`). The structure follows a hierarchical pattern:
+
+```yaml
+component_name:
+  base: "base classes"
+  child_component:
+    base: "child classes"
+    nested:
+      value: "nested classes"
+```
+
+### Yass Helper Usage
+The `yass` helper is used to access these styles in component templates. It uses nested hash syntax to navigate the YAML structure:
+
+```erb
+<%# Basic usage %>
+<%= yass(component_name: :base) %>
+
+<%# Accessing nested values %>
+<%= yass(component_name: { child_component: { nested: :value } }) %>
+```
+
+Key points:
+- Uses nested hash syntax to represent YAML hierarchy
+- Nested components inherit from parent's YAML file
+- The YAML structure directly maps to the nested hash structure used in `yass`
+
+Example from MenuComponent:
+```yaml
+menu:
+  button: "button classes"
+  items:
+    base: "items classes"
+    transition:
+      enter: "transition classes"
+```
+
+```erb
+<%= yass(menu: :button) %>
+<%= yass(menu: :items) %>
+<%= yass(menu: { items: { transition: :enter } }) %>
+``` 
