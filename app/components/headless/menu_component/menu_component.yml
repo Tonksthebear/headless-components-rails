@@ -1,15 +1,15 @@
-menu:
-  base: "relative"
-  button:
-    base: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-  items:
-    base: "absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-    transition:
-      enter: "transition ease-out duration-100"
-      enter_from: "transform opacity-0 scale-95"
-      enter_to: "transform opacity-100 scale-100"
-      leave: "transition ease-in duration-75"
-      leave_from: "transform opacity-100 scale-100"
-      leave_to: "transform opacity-0 scale-95"
-  item:
-    base: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" 
+menu: "relative"
+button: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+items: "absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none w-52 origin-top-right rounded-xl border border-white/5 bg-white/5 p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+item:
+  base: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 data-[focus]:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10" 
+
+# item: "group cursor-default rounded-lg px-3.5 py-2.5 focus:outline-hidden sm:px-3 sm:py-1.5 text-left text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText] data-focus:bg-blue-500 data-focus:text-white  data-disabled:opacity-50 forced-color-adjust-none forced-colors:data-focus:bg-[Highlight] forced-colors:data-focus:text-[HighlightText] forced-colors:data-focus:*:data-[slot=icon]:text-[HighlightText] col-span-full grid grid-cols-[auto_1fr_1.5rem_0.5rem_auto] items-center supports-[grid-template-columns:subgrid]:grid-cols-subgrid data-[slot=icon]:col-start-1 data-[slot=icon]:row-start-1 data-[slot=icon]:mr-2.5 data-[slot=icon]:-ml-0.5 data-[slot=icon]:size-5 sm:data-[slot=icon]:mr-2 sm:data-[slot=icon]:size-4 data-[slot=icon]:text-zinc-500 data-focus:*:data-[slot=icon]:text-white dark:*:data-[slot=icon]:text-zinc-400 dark:data-focus:*:data-[slot=icon]:text-white data-[slot=avatar]:mr-2.5 data-[slot=avatar]:-ml-1 data-[slot=avatar]:size-6 sm:data-[slot=avatar]:mr-2 sm:data-[slot=avatar]:size-5 '*:data-[slot=avatar]:mr-2.5 *:data-[slot=avatar]:-ml-1 *:data-[slot=avatar]:size-6 sm:*:data-[slot=avatar]:mr-2 sm:*:data-[slot=avatar]:size-5"
+
+transition:
+  enter: "transition ease-out duration-100"
+  enter_from: "transform opacity-0 scale-95"
+  enter_to: "transform opacity-100 scale-100"
+  leave: "transition ease-in duration-75"
+  leave_from: "transform opacity-100 scale-100"
+  leave_to: "transform opacity-0 scale-95"
