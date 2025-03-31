@@ -1,10 +1,4 @@
 <div class="<%= yass(:menu) %>" data-controller="headless--menu headless--transition" data-action="click@document->headless--menu#closeOnClickOutside headless--transition:enter->headless--menu#menuOpened headless--transition:leave->headless--menu#menuClosed headless--menu:leave->headless--transition#leave keydown.down->headless--menu#focusNextItem keydown.up->headless--menu#focusPreviousItem keydown.esc@document->headless--transition#leave">
   <%= button %>
-  <%= render Headless::MenuComponent::ItemsComponent.new do |items_component| %>
-    <% items.each do |item| %>
-      <% items_component.with_item do %>
-        <%= item %>
-      <% end %>
-    <% end %>
-  <% end %>
+  <%= items %>
 </div> 
