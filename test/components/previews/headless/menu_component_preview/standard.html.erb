@@ -1,0 +1,18 @@
+<%= render Headless::MenuComponent.new(open: true) do |menu| %>
+  <% menu.with_button do %>
+    Options
+  <% end %>
+
+  <% menu.with_items do |items| %>
+    <% items.with_item do %>
+      Edit
+      <span class="ml-auto hidden font-sans text-xs group-data-[focus]:inline">⌘E</span>
+    <% end %>
+    <% items.with_item do %>
+      Duplicate
+    <% end %>
+    <% items.with_item(disabled: true) do %>
+      Archive
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,7 +1,7 @@
 module Headless
   class MenuComponent < ApplicationComponent
     renders_one :button, "ButtonComponent"
-    renders_many :items, "ItemComponent"
+    renders_one :items, "ItemsComponent"
 
     attr_reader :open, :disabled
 
@@ -21,15 +21,6 @@ module Headless
       end
     end
 
-    class ItemComponent < ApplicationComponent
-      attr_reader :disabled
-
-      def initialize(disabled: false)
-        @disabled = disabled
-        super
-      end
-    end
-
     class ItemsComponent < ApplicationComponent
       renders_many :items, "Headless::MenuComponent::ItemComponent"
 
@@ -38,6 +29,15 @@ module Headless
       def initialize(static: false, unmount: true)
         @static = static
         @unmount = unmount
+        super
+      end
+    end
+
+    class ItemComponent < ApplicationComponent
+      attr_reader :disabled
+
+      def initialize(disabled: false)
+        @disabled = disabled
         super
       end
     end
