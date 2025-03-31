@@ -8,6 +8,8 @@ export default class extends ApplicationController {
   }
 
   menuOpened() {
+    this.itemsTarget.setAttribute("data-open", "")
+    this.itemsTarget.removeAttribute("data-closed", "")
     this.element.setAttribute("data-open", "")
     this.buttonTarget.setAttribute("aria-expanded", "true")
     this.element.setAttribute("data-active", "")
@@ -15,6 +17,8 @@ export default class extends ApplicationController {
   }
 
   menuClosed() {
+    this.itemsTarget.removeAttribute("data-open")
+    this.itemsTarget.setAttribute("data-closed", "")
     this.element.removeAttribute("data-open")
     this.buttonTarget.setAttribute("aria-expanded", "false")
     this.element.removeAttribute("data-active")
