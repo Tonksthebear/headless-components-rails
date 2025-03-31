@@ -1,52 +1,51 @@
-import { Controller } from "@hotwired/stimulus"
+import ApplicationController from "controllers/headless/application_controller"
 
-export default class extends Controller {
+export default class extends ApplicationController {
   static targets = ["button", "items", "item"]
   static values = {
     open: Boolean,
     disabled: Boolean
   }
 
-  connect() {
-    this.closeOnClickOutside = this.closeOnClickOutside.bind(this)
-    document.addEventListener("click", this.closeOnClickOutside)
+  menuOpened() {
+    this.element.setAttribute("data-open", "")
+    this.buttonTarget.setAttribute("aria-expanded", "true")
+    this.element.setAttribute("data-active", "")
+    this.itemTargets[0].focus()
   }
 
-  disconnect() {
-    document.removeEventListener("click", this.closeOnClickOutside)
+  menuClosed() {
+    this.element.removeAttribute("data-open")
+    this.buttonTarget.setAttribute("aria-expanded", "false")
+    this.element.removeAttribute("data-active")
   }
 
-  toggle() {
-    if (this.disabledValue) return
-    this.openValue = !this.openValue
-    this.updateMenuState()
+  focus(event) {
+    event.currentTarget.focus()
+    event.currentTarget.setAttribute("data-focus", "")
+    event.currentTarget.setAttribute("data-active", "")
+  }
+
+  blur(event) {
+    event.currentTarget.blur()
+    event.currentTarget.removeAttribute("data-focus")
+    event.currentTarget.removeAttribute("data-active")
   }
 
   select(event) {
     const item = event.currentTarget
     if (item.dataset.disabled === "true") return
-    
+
     this.openValue = false
     this.updateMenuState()
-    
+
     // Dispatch a custom event that can be listened to
     this.dispatch("select", { detail: { item } })
   }
 
   closeOnClickOutside(event) {
     if (!this.element.contains(event.target)) {
-      this.openValue = false
-      this.updateMenuState()
-    }
-  }
-
-  updateMenuState() {
-    if (this.openValue) {
-      this.itemsTarget.classList.remove("hidden")
-      this.buttonTarget.setAttribute("aria-expanded", "true")
-    } else {
-      this.itemsTarget.classList.add("hidden")
-      this.buttonTarget.setAttribute("aria-expanded", "false")
+      this.dispatch("leave")
     }
   }
 

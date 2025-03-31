@@ -1,12 +1,12 @@
-<div class="<%= yass(menu: :items) %>" 
+<div class="<%= yass(:items) %>" 
      data-headless--menu-target="items"
-     data-transition="enter"
-     data-enter="<%= yass(menu: { transition: :enter }) %>"
-     data-enter-from="<%= yass(menu: { transition: :enter_from }) %>"
-     data-enter-to="<%= yass(menu: { transition: :enter_to }) %>"
-     data-leave="<%= yass(menu: { transition: :leave }) %>"
-     data-leave-from="<%= yass(menu: { transition: :leave_from }) %>"
-     data-leave-to="<%= yass(menu: { transition: :leave_to }) %>">
+     data-headless--transition-target="listener"
+     data-enter="<%= yass(transition: :enter ) %>"
+     data-enter-from="<%= yass(transition: :enter_from ) %>"
+     data-enter-to="<%= yass(transition: :enter_to ) %>"
+     data-leave="<%= yass(transition: :leave ) %>"
+     data-leave-from="<%= yass(transition: :leave_from ) %>"
+     data-leave-to="<%= yass(transition: :leave_to ) %>">
      <% items.each do |item| %>
       <%= item %>
      <% end %>
