@@ -28,10 +28,10 @@ export default class extends ApplicationController {
   }
 
   #transition(direction) {
-    this.listenerTargets.forEach((listener) => {
-      eval(`${direction}Transition(listener)`)
-        .then(() => this.element.dispatchEvent(new Event(`transition:${direction}`)))
-    })
+    // this.listenerTargets.forEach((listener) => {
+    //   eval(`${direction}Transition(listener)`)
+    //     .then(() => this.element.dispatchEvent(new Event(`transition:${direction}`)))
+    // })
 
     this.transitionedValue ? this.dispatch("enter") : this.dispatch("leave")
   }

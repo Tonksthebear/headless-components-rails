@@ -8,4 +8,6 @@
 /test/dummy/log/*.log
 /test/dummy/storage/
 /headlessui/
-/catalyst-ui-kit/
+/test/dummy/catalyst-ui-kit/
+/test/dummy/config/utility_classes.yml
+/test/dummy/tmp/
