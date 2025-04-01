@@ -27,80 +27,93 @@ module HeadlessViewComponent
       result = { "headless" => {} }
 
       COMPONENT_MAPPING.each do |headless_component, catalyst_info|
+        # Construct the file path
         catalyst_file = File.join(@javascript_dir, "#{catalyst_info[:file]}.jsx")
         next unless File.exist?(catalyst_file)
 
+        # Read the file content
         content = File.read(catalyst_file)
         class_items = extract_class_items(content, catalyst_info[:component])
         next if class_items.empty?
 
-        # Transform component name into nested structure
+        # Parse the component path (e.g., "MenuComponent::ItemComponent" -> ["menu", "item"])
         path = headless_component
-          .gsub("Headless::", "")
-          .gsub("Component", "")
-          .split("::")
-          .map(&:downcase)
+            .gsub("Headless::", "")
+            .gsub("Component", "")
+            .split("::")
+            .map(&:downcase)
 
-        # Build nested hash
-        current = result["headless"]
-        path.each_with_index do |part, index|
-          if index == path.length - 1
-            # Check for existing hash to prevent TypeError if a parent was already assigned classes
-            if current.key?(part) && !current[part].is_a?(Hash)
-              puts "Warning: Overwriting existing classes for parent component '#{path[0...index].join('.')}' to add child '#{part}'. Consider refining the mapping."
-            end
-            current[part] = class_items
-          else
-            # Ensure node exists and is a Hash for nesting
-            current[part] = {} unless current.key?(part) && current[part].is_a?(Hash)
+        # Only assign class_items to subcomponents (leaf nodes with path length > 1)
+        if path.length > 1
+          current = result["headless"]
+          # Traverse up to the second-to-last part, ensuring hashes
+          path[0..-2].each do |part|
+            current[part] ||= {}
             current = current[part]
           end
+          # Assign class_items to the leaf
+          current[path.last] = class_items
         end
       end
 
       result
     end
 
+    def to_yaml(data = generate, indent = 0)
+      yaml = ""
+      data.each do |key, value|
+        if value.is_a?(Hash)
+          yaml += "  " * indent + "#{key}:\n"
+          yaml += to_yaml(value, indent + 1)
+        elsif value.is_a?(Array)
+          yaml += "  " * indent + "#{key}:\n"
+          value.each do |line|
+            yaml += "  " * (indent + 1) + "#{line}\n"
+          end
+        end
+      end
+      yaml
+    end
+
     private
 
     def extract_class_items(content, component_name)
-      # Find the component definition
-      component_pattern = /export function #{component_name}[^{]*{(.*)}/m
+      # Match the component function definition
+      component_pattern = /export function #{component_name}\s*\([^)]*\)\s*\{((?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*)\}/m
       component_match = content.match(component_pattern)
       return [] unless component_match && component_match[1]
 
       component_content = component_match[1]
-      # puts "Processing component content for #{component_name}:"
-      # puts component_content
+      # Look for className or classes definition
+      class_name_pattern = /className\s*=\s*\{([\s\S]*?)\}/
+      classes_pattern = /let\s+classes\s*=\s*clsx\(([\s\S]*?)\);/
+      clsx_pattern = /clsx\(((?:[^()]+|\((?:[^()]+|\((?:[^()]+|\([^()]*\))*\))*\))*?)\)/
 
-      # Extract content inside className={...}
-      class_name_pattern = /\s*className\s*=\s*{([^}]+)}/m
-      matches = component_content.match(class_name_pattern)
-      # puts "Found className matches: #{matches.inspect}"
-      return [] unless matches && matches[1]
 
-      content_inside_braces = matches[1]
-      lines = content_inside_braces.split("\n")
+      # match = component_content.match(class_name_pattern) || component_content.match(classes_pattern)
+      match = component_content.match(clsx_pattern)
+      return [] unless match && match[1]
 
+      content_inside = match[1]
+
+      # Parse the class strings and comments
+      lines = content_inside.split("\n")
       items = []
-      comment_regex = %r{^\s*//(.*)$} # Match comment lines
-      string_regex = /^\s*['"]([^'"]+)['"],?\s*$/ # Match 'string', "string", 'string',, "string",
+
+      # Regex for comments and class strings
+      comment_regex = /^\s*\/\/(.*)$/
+      string_regex = /'([^']*)'|"([^"]*)"/
 
       lines.each do |line|
-        comment_match = line.match(comment_regex)
-        string_match = line.match(string_regex)
-
-        if comment_match
-          # Store comment with a marker to distinguish it later
-          items << { type: :comment, value: comment_match[1].strip }
-        elsif string_match
-          # Store the actual class string
-          items << { type: :class, value: string_match[1].strip }
+        line = line.strip
+        if comment_match = line.match(comment_regex)
+          items << "# #{comment_match[1].strip}"
+        elsif string_match = line.match(string_regex)
+          items << %(- "#{string_match[1].strip}")
         end
-        # Ignore lines that are neither comments nor valid strings (like clsx(, ), etc.)
+        # Ignore other lines (e.g., variables like className)
       end
-
-      items # Return array of hashes {type: :comment/:class, value: ...}
+      items
     end
   end
 end
