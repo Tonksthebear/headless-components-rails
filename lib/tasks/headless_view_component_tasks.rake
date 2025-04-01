@@ -5,6 +5,7 @@
 
 require "yaml"
 require_relative "../headless_view_component/utility_classes_generator"
+require_relative "../headless_view_component/parser/jsx_parser"
 
 namespace :headless_view_component do
   desc "Generate utility_classes.yml in the host app's config directory"
@@ -26,6 +27,7 @@ namespace :headless_view_component do
     end
 
     generator = HeadlessViewComponent::UtilityClassesGenerator.new(catalyst_path)
+    generator.parse_javascript_file
     result = generator.to_yaml
 
     # Write to the host app's config directory
