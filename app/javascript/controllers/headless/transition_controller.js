@@ -23,7 +23,7 @@ export default class extends ApplicationController {
   connect() {
     this.cleanup = new Set()
     this.childTransitions = new Set()
-    this.activeTransitions = new Set()
+    this.activeTransitions = new Map() // Use a Map: element -> { id, controller }
     this.startAnimationValue && this.enter()
   }
 
@@ -53,6 +53,11 @@ export default class extends ApplicationController {
       // If disabled, just update state without transitions
       this.transitionedValue = direction === 'enter'
       return
+    }
+
+    // If we're already transitioning, mark the current transition as cancelled
+    if (this.inFlightValue) {
+      this.cancelledValue = true
     }
 
     this.dispatch(`before${direction}`)
@@ -110,26 +115,116 @@ export default class extends ApplicationController {
     await Promise.all([parentTransition, ...childTransitions])
   }
 
-  // Update transition data attributes to match React implementation
-  #updateTransitionData(element, direction) {
-    const previous = element.style.transition
-    element.style.transition = 'none'
-    element.setAttribute('data-transition', '')
-    element.offsetHeight
-    element.style.transition = previous
-
-    // element.removeAttribute('data-transition')
-    element.removeAttribute('data-enter')
-    element.removeAttribute('data-leave')
-    element.removeAttribute('data-closed')
-
-    if (direction === 'enter') {
-      element.setAttribute('data-enter', '')
-    } else if (direction === 'leave') {
-      element.setAttribute('data-leave', '')
-      element.offsetHeight
-      element.setAttribute('data-closed', '')
+  // Enhanced transition preparation
+  #prepareTransition(element, prepare, transitionId) {
+    // Check if this element is already transitioning
+    if (this.activeTransitions.has(element)) {
+      // If already transitioning, just update the state/attributes for the *new*
+      // transition direction. Don't explicitly abort the old one here.
+      // The old transition promise will eventually resolve or be cleaned up.
+      prepare()
+      // Still need reflow etc. for the *new* transition, so proceed.
     }
+
+    // Step 1: Ensure element is visible (remove !hidden if necessary)
+    if (element.hasAttribute('data-hide-after-transition') && element.classList.contains('!hidden')) {
+      element.classList.remove('!hidden')
+    }
+    element.offsetHeight
+
+    // Store previous transition style
+    const previous = element.style.transition
+
+    // Force cancel current transition
+    element.style.transition = 'none'
+
+    // Step 2: Update flags and set initial data-attributes (e.g., data-enter, data-leave)
+    prepare()
+
+    // Step 3: Force ONE reflow to register visibility AND data-attributes/initial CSS
+    element.offsetHeight
+
+    // Step 4: Restore transition style to allow animation to run
+    element.style.transition = previous
+  }
+
+  // Enhanced animation detection and handling
+  #afterTransition(element, signal) {
+    // If already aborted (by navigation) before even checking, resolve immediately.
+    if (signal.aborted) return Promise.resolve();
+
+    const animations = element.getAnimations?.() ?? [];
+    if (animations.length === 0) return Promise.resolve();
+
+    // Create a promise that resolves when the abort signal fires (e.g., navigation)
+    const onAbort = new Promise(resolve => {
+      // Check again in case it aborted right before adding the listener
+      if (signal.aborted) {
+        resolve();
+      } else {
+        // { once: true } ensures the listener cleans itself up
+        signal.addEventListener('abort', resolve, { once: true });
+      }
+    });
+
+    // Create a promise that resolves when all animations have settled
+    // (finished naturally or cancelled by interruption/other means).
+    // We use .then() to ensure this branch *always resolves* the outer promise,
+    // swallowing any potential rejections from individual animation.finished promises.
+    const animationsSettled = Promise.allSettled(
+      animations.map(animation => animation.finished)
+    ).then(() => { /* Always resolve void */ });
+
+    // Return a promise that resolves when EITHER the abort signal fires
+    // OR all animations have settled.
+    return Promise.race([onAbort, animationsSettled]);
+  }
+
+  // Enhanced frame handling - Simplified to one frame
+  #nextFrames() {
+    return new Promise(resolve => {
+      requestAnimationFrame(resolve)
+    })
+  }
+
+  // Enhanced event dispatching
+  dispatch(event, detail = {}) {
+    this.element.dispatchEvent(
+      new CustomEvent(`transition:${event}`, {
+        bubbles: true,
+        cancelable: true,
+        detail
+      })
+    )
+  }
+
+  // Enhanced transition data update
+  #updateTransitionData(element, direction, transitionId) {
+    this.#prepareTransition(element, () => {
+      // 1. Update state flags
+      if (direction === 'enter') {
+        this.#addFlag(TransitionState.Enter | TransitionState.Closed)
+        this.#removeFlag(TransitionState.Leave)
+      } else {
+        this.#addFlag(TransitionState.Leave)
+        this.#removeFlag(TransitionState.Enter)
+      }
+
+      // 2. Set initial data attributes based on direction
+      element.setAttribute('data-transition', '')
+      element.removeAttribute('data-enter')
+      element.removeAttribute('data-leave')
+      element.removeAttribute('data-closed')
+
+      if (direction === 'enter') {
+        // Enter starts from [data-leave][data-closed] state
+        element.setAttribute('data-leave', '')
+        element.setAttribute('data-closed', '')
+      } else if (direction === 'leave') {
+        // Leave starts from [data-leave] state
+        element.setAttribute('data-leave', '')
+      }
+    }, transitionId)
   }
 
   // Core transition logic for a single element
@@ -137,10 +232,11 @@ export default class extends ApplicationController {
     const abortController = new AbortController()
     const transitionId = Symbol()
 
-    // Handle Turbo navigation interruption
+    // Handle Turbo navigation interruption ONLY
     const cleanup = () => {
       document.removeEventListener('turbo:before-render', handleAbort)
-      abortController.abort()
+      // Only abort for navigation, not animation interruptions
+      abortController.abort('navigation')
     }
 
     const handleAbort = () => {
@@ -151,62 +247,104 @@ export default class extends ApplicationController {
     this.cleanup.add(cleanup)
 
     try {
+      // Remove any previous entry for this element before adding the new one
+      // This handles the case where a new transition starts before the previous finished cleanup
+      this.activeTransitions.delete(element)
       // Track this transition
-      const transitionPromise = (async () => {
-        // Track this specific transition
-        this.activeTransitions.add(transitionId)
-        this.inFlightValue = true
+      this.activeTransitions.set(element, { id: transitionId, controller: abortController })
 
-        // Update state flags
+      const transitionPromise = (async () => {
+        // 1. Prepare the transition: Set initial state (flags, attributes)
+        this.#updateTransitionData(element, direction, transitionId)
+        // Do NOT check abortController.signal here, prepare doesn't abort anymore
+
+        // 2. Wait for the next frame - crucial delay
+        await this.#nextFrames()
+        // Check if aborted by NAVIGATIION before proceeding
+        if (abortController.signal.aborted) return
+
+        // 3. Trigger the transition by applying the target state attribute changes
+        // Reverted the cancelled check here
         if (direction === 'enter') {
-          this.#addFlag(TransitionState.Enter | TransitionState.Closed)
-          this.#removeFlag(TransitionState.Leave)
-        } else {
-          this.#addFlag(TransitionState.Leave)
-          this.#removeFlag(TransitionState.Enter)
+          element.removeAttribute('data-leave')
+          element.removeAttribute('data-closed')
+          element.setAttribute('data-enter', '')
+        } else if (direction === 'leave') {
+          element.setAttribute('data-closed', '')
         }
 
-        // Update transition data attributes
-        this.#updateTransitionData(element, direction)
+        // 4. Mark this transition as active
+        // No longer adding to activeTransitions here, moved to start of try block
+        this.inFlightValue = true
 
-        await this.#nextFrame()
-        if (abortController.signal.aborted) return
-
-        // Wait for the transition to complete
+        // 5. Wait for the animation to complete
         await this.#afterTransition(element, abortController.signal)
+        // Check if aborted by NAVIGATIION during animation
         if (abortController.signal.aborted) return
 
-        // Remove transition attribute after animation completes
+        // 6. Cleanup after successful animation
+        // Attributes are cleaned up here
+        element.removeAttribute('data-enter')
+        element.removeAttribute('data-leave')
         element.removeAttribute('data-transition')
+        element.removeAttribute('data-closed')
         element.dataset.transitioned = (direction === 'enter').toString()
+
+        // Handle hide after transition
+        if (direction === 'leave' && element.hasAttribute('data-hide-after-transition')) {
+          element.classList.add('!hidden')
+        }
       })()
 
       this.childTransitions.add(transitionPromise)
       await transitionPromise
       this.childTransitions.delete(transitionPromise)
 
+      // ---- SUCCESSFUL COMPLETION CLEANUP ----
+      // If we reach here, the transition completed without being aborted by navigation
+
       // Cleanup state flags
       this.#removeFlag(TransitionState.Enter | TransitionState.Leave | TransitionState.Closed)
-      this.activeTransitions.delete(transitionId)
+
+      // Remove from active map IF it's still this transition's ID (prevent race condition)
+      const currentActive = this.activeTransitions.get(element)
+      if (currentActive && currentActive.id === transitionId) {
+        this.activeTransitions.delete(element)
+      }
 
       // Only set inFlight to false if no other transitions are active
       if (this.activeTransitions.size === 0) {
         this.inFlightValue = false
       }
 
-      element.dispatchEvent(new Event(`${direction}:finished`))
+      // Dispatch finished event
+      this.dispatch(`${direction}:finished`)
 
     } catch (error) {
-      if (error.name === 'AbortError') {
-        // Clean up data attributes on abort
+      // Only catch AbortError specifically from navigation
+      if (error.name === 'AbortError' && abortController.signal.reason === 'navigation') {
+        console.log(`Transition aborted by navigation for element:`, element)
+        // Perform full cleanup for navigation abort
         element.removeAttribute('data-enter')
         element.removeAttribute('data-leave')
         element.removeAttribute('data-transition')
         element.removeAttribute('data-closed')
+      } else {
+        // Rethrow other errors (including potential unexpected AbortErrors)
+        console.error("Transition failed:", error) // Log other errors
+        throw error
       }
-      throw error
     } finally {
-      this.cleanup.delete(cleanup)
+      // Final cleanup check: Remove from map if still present and matches ID
+      const currentActive = this.activeTransitions.get(element)
+      if (currentActive && currentActive.id === transitionId) {
+        this.activeTransitions.delete(element)
+      }
+      // Ensure inFlightValue is reset if this was the last transition
+      if (this.activeTransitions.size === 0) {
+        this.inFlightValue = false
+      }
+      this.cleanup.delete(cleanup) // Remove Turbo listener
     }
   }
 
@@ -229,19 +367,5 @@ export default class extends ApplicationController {
         requestAnimationFrame(resolve)
       })
     })
-  }
-
-  #afterTransition(element, signal) {
-    const animations = element.getAnimations()
-    if (animations.length === 0) return Promise.resolve()
-
-    return Promise.race([
-      Promise.all(animations.map(animation => animation.finished)),
-      new Promise((_, reject) => {
-        signal.addEventListener('abort', () =>
-          reject(new DOMException('Transition aborted', 'AbortError'))
-        )
-      })
-    ])
   }
 }
