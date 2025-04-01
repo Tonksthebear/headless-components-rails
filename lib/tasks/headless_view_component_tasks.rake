@@ -7,33 +7,6 @@ require "yaml"
 require_relative "../headless_view_component/utility_classes_generator"
 
 namespace :headless_view_component do
-  # Custom YAML generation function
-  def generate_yaml(data, indent = 0)
-    yaml_string = ""
-    indent_space = "  " * indent
-
-    data.each do |key, value|
-      yaml_string << "#{indent_space}#{key}:\n"
-      if value.is_a?(Hash)
-        yaml_string << generate_yaml(value, indent + 1)
-      elsif value.is_a?(Array)
-        value.each do |item|
-          if item.is_a?(Hash) && item[:type] == :comment
-            # Format comment lines
-            yaml_string << "#{indent_space}  # #{item[:value]}\n"
-          elsif item.is_a?(Hash) && item[:type] == :class
-            # Format class lines as YAML list items
-            yaml_string << "#{indent_space}  - \"#{item[:value]}\"\n" # Ensure strings are quoted
-          else
-            # Fallback for unexpected array items (shouldn't happen with current logic)
-            yaml_string << "#{indent_space}  - #{item.inspect}\n"
-          end
-        end
-      end
-    end
-    yaml_string
-  end
-
   desc "Generate utility_classes.yml in the host app's config directory"
   task :generate_utility_classes, [ :catalyst_path ] do |t, args|
     # Default to the host app's root if no path is provided
@@ -53,18 +26,15 @@ namespace :headless_view_component do
     end
 
     generator = HeadlessViewComponent::UtilityClassesGenerator.new(catalyst_path)
-    result = generator.generate
+    result = generator.to_yaml
 
     # Write to the host app's config directory
     config_dir = Rails.root.join("config")
     FileUtils.mkdir_p(config_dir)
 
-    # Generate YAML using the custom function
-    yaml_output = generate_yaml(result)
-
     File.write(
       config_dir.join("utility_classes.yml"),
-      yaml_output
+      result
     )
 
     puts "Generated utility_classes.yml in #{config_dir}"

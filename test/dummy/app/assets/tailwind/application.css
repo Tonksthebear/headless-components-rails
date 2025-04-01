@@ -1,4 +1,5 @@
 @import "tailwindcss";
 
+@source "../../../config/utility_classes.yml";
 @source "../../../../../app";
 @source "../../../../../test/components/previews";

@@ -3,6 +3,7 @@ module HeadlessViewComponent
     config.to_prepare do
       Classy::Yaml.setup do |config|
         config.engine_files << Engine.root.join("config/headless_view_component/utility_classes.yml")
+        config.extra_files << Rails.root.join("config/headless_view_component/utility_classes.yml")
       end
     end
 

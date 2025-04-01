@@ -357,10 +357,6 @@ export default class extends ApplicationController {
     this.stateValue &= ~flag
   }
 
-  #hasFlag(flag) {
-    return (this.stateValue & flag) === flag
-  }
-
   #nextFrame() {
     return new Promise(resolve => {
       requestAnimationFrame(() => {
