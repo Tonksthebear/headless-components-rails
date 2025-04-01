@@ -1,78 +1,79 @@
 module HeadlessViewComponent
   class UtilityClassesGenerator
-    COMPONENT_MAPPING = {
-      "Headless::MenuComponent" => { file: "dropdown", component: "DropdownMenu" },
-      "Headless::MenuComponent::ButtonComponent" => { file: "dropdown", component: "DropdownButton" },
-      "Headless::MenuComponent::ItemsComponent" => { file: "dropdown", component: "DropdownMenu" },
-      "Headless::MenuComponent::ItemComponent" => { file: "dropdown", component: "DropdownItem" },
-      "Headless::MenuComponent::SectionComponent" => { file: "dropdown", component: "DropdownSection" },
-      "Headless::MenuComponent::HeadingComponent" => { file: "dropdown", component: "DropdownHeading" },
-      "Headless::MenuComponent::SeparatorComponent" => { file: "dropdown", component: "DropdownDivider" },
-      "Headless::MenuComponent::LabelComponent" => { file: "dropdown", component: "DropdownLabel" },
-      "Headless::MenuComponent::DescriptionComponent" => { file: "dropdown", component: "DropdownDescription" },
-      "Headless::MenuComponent::ShortcutComponent" => { file: "dropdown", component: "DropdownShortcut" },
-      "Headless::MenuComponent::HeaderComponent" => { file: "dropdown", component: "DropdownHeader" }
-    }.freeze
-
-    # def self.generate(catalyst_dir = nil)
-    # new(catalyst_dir).generate
-    # end
-
     def initialize(catalyst_dir = nil)
       @catalyst_dir = catalyst_dir || File.expand_path("./catalyst-ui-kit", __dir__)
       @javascript_dir = File.join(@catalyst_dir, "javascript")
     end
 
-    def parse_javascript_file
-      parser = Parser::JsxTailwindParser.new
+    def component_mapping
+      components_dir = Engine.root.join("app/components")
+      component_files = Dir.glob("#{components_dir}/**/*_component.rb")
 
-      COMPONENT_MAPPING.each do |headless_component, catalyst_info|
-        # Construct the file path
-        catalyst_file = File.join(@javascript_dir, "#{catalyst_info[:file]}.jsx")
-        next unless File.exist?(catalyst_file)
-        classes = parser.extract_classes_from_file(catalyst_file)
-        # binding.irb
-        exit
+      component_files.each do |file|
+        begin
+          require file
+        rescue StandardError => e
+          puts "Warning: Could not load #{file} - #{e.message}"
+        end
+      end
+
+      def find_subclasses(klass)
+        subclasses = klass.subclasses
+        subclasses + subclasses.flat_map { |sub| find_subclasses(sub) }
+      end
+
+      # Get all subclasses of Headless::ApplicationComponent
+      headless_components = find_subclasses(::Headless::ApplicationComponent)
+
+      # Output the results
+      if headless_components.empty?
+        puts "No subclasses of Headless::ApplicationComponent found."
+      else
+        headless_components.reject { |klass| klass.jsx_mapping[:file].nil? }.map do |klass|
+          klass.jsx_mapping
+        end.group_by { |mapping| mapping[:file] }
       end
     end
 
-    def generate
+    def parse_javascript_file(file)
+      parser = Parser::JsxTailwindParser.new
+
+      # Construct the file path
+      catalyst_file = File.join(@javascript_dir, "#{file}.jsx")
+      return unless File.exist?(catalyst_file)
+      parser.extract_classes_from_file(catalyst_file)
+    end
+
+    def generate_mappings
       result = { "headless" => {} }
 
-      COMPONENT_MAPPING.each do |headless_component, catalyst_info|
-        # Construct the file path
-        catalyst_file = File.join(@javascript_dir, "#{catalyst_info[:file]}.jsx")
-        next unless File.exist?(catalyst_file)
+      component_mapping.map do |file, mappings|
+        parsed_classes = parse_javascript_file(file)
 
-        # Read the file content
-        content = File.read(catalyst_file)
-        class_items = extract_class_items(content, catalyst_info[:component])
-        next if class_items.empty?
-
-        # Parse the component path (e.g., "MenuComponent::ItemComponent" -> ["menu", "item"])
-        path = headless_component
+        mappings.each do |mapping|
+          path = mapping[:view_component]
             .gsub("Headless::", "")
             .gsub("Component", "")
             .split("::")
             .map(&:downcase)
 
-        # Only assign class_items to subcomponents (leaf nodes with path length > 1)
-        if path.length > 1
-          current = result["headless"]
-          # Traverse up to the second-to-last part, ensuring hashes
-          path[0..-2].each do |part|
-            current[part] ||= {}
-            current = current[part]
+          # Only assign class_items to subcomponents (leaf nodes with path length > 1)
+          if path.length > 1
+            current = result["headless"]
+            # Traverse up to the second-to-last part, ensuring hashes
+            path[0..-2].each do |part|
+              current[part] ||= {}
+              current = current[part]
+            end
+            current[path.last] = parsed_classes.dig(mapping[:component], "classLines")
           end
-          # Assign class_items to the leaf
-          current[path.last] = class_items
         end
       end
 
       result
     end
 
-    def to_yaml(data = generate, indent = 0)
+    def to_yaml(data = generate_mappings, indent = 0)
       yaml = ""
       data.each do |key, value|
         if value.is_a?(Hash)
@@ -86,47 +87,6 @@ module HeadlessViewComponent
         end
       end
       yaml
-    end
-
-    private
-
-    def extract_class_items(content, component_name)
-      # Match the component function definition
-      component_pattern = /export function #{component_name}\s*\([^)]*\)\s*\{((?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*)\}/m
-      component_match = content.match(component_pattern)
-      return [] unless component_match && component_match[1]
-
-      component_content = component_match[1]
-      # Look for className or classes definition
-      class_name_pattern = /className\s*=\s*\{([\s\S]*?)\}/
-      classes_pattern = /let\s+classes\s*=\s*clsx\(([\s\S]*?)\);/
-      clsx_pattern = /clsx\(((?:[^()]+|\((?:[^()]+|\((?:[^()]+|\([^()]*\))*\))*\))*?)\)/
-
-
-      # match = component_content.match(class_name_pattern) || component_content.match(classes_pattern)
-      match = component_content.match(clsx_pattern)
-      return [] unless match && match[1]
-
-      content_inside = match[1]
-
-      # Parse the class strings and comments
-      lines = content_inside.split("\n")
-      items = []
-
-      # Regex for comments and class strings
-      comment_regex = /^\s*\/\/(.*)$/
-      string_regex = /'([^']*)'|"([^"]*)"/
-
-      lines.each do |line|
-        line = line.strip
-        if comment_match = line.match(comment_regex)
-          items << "# #{comment_match[1].strip}"
-        elsif string_match = line.match(string_regex)
-          items << %(- "#{string_match[1].strip}")
-        end
-        # Ignore other lines (e.g., variables like className)
-      end
-      items
     end
   end
 end
