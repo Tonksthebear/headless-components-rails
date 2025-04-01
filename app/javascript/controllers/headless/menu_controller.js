@@ -13,7 +13,7 @@ export default class extends ApplicationController {
     this.element.setAttribute("data-open", "")
     this.buttonTarget.setAttribute("aria-expanded", "true")
     this.element.setAttribute("data-active", "")
-    this.itemTargets[0].focus()
+    this.element.focus()
   }
 
   menuClosed() {

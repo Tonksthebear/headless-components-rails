@@ -12,6 +12,8 @@ module Headless
     end
 
     class ButtonComponent < ApplicationComponent
+      jsx_mapping file: "dropdown", component: "DropdownButton"
+
       attr_reader :disabled, :auto_focus
 
       def initialize(disabled: false, auto_focus: false)
@@ -22,6 +24,8 @@ module Headless
     end
 
     class ItemsComponent < ApplicationComponent
+      jsx_mapping file: "dropdown", component: "DropdownMenu"
+
       renders_many :items, "Headless::MenuComponent::ItemComponent"
 
       attr_reader :static, :unmount
@@ -34,6 +38,8 @@ module Headless
     end
 
     class ItemComponent < ApplicationComponent
+      jsx_mapping file: "dropdown", component: "DropdownItem"
+
       attr_reader :disabled
 
       def initialize(disabled: false)

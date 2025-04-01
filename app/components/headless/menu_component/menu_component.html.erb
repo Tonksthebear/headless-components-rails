@@ -1,4 +1,4 @@
-<div data-controller="headless--menu headless--transition" data-action="click@document->headless--menu#closeOnClickOutside headless--transition:enter->headless--menu#menuOpened headless--transition:leave->headless--menu#menuClosed headless--menu:leave->headless--transition#leave keydown.down->headless--menu#focusNextItem keydown.up->headless--menu#focusPreviousItem keydown.esc@document->headless--transition#leave">
+<div tabindex="-1" data-controller="headless--menu headless--transition" data-action="click@document->headless--menu#closeOnClickOutside transition:afterenter->headless--menu#menuOpened transition:afterleave->headless--menu#menuClosed headless--menu:leave->headless--transition#leave keydown.down->headless--menu#focusNextItem keydown.up->headless--menu#focusPreviousItem keydown.esc@document->headless--transition#leave">
   <%= button %>
   <%= items %>
 </div> 

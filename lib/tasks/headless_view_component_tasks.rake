@@ -27,7 +27,6 @@ namespace :headless_view_component do
     end
 
     generator = HeadlessViewComponent::UtilityClassesGenerator.new(catalyst_path)
-    generator.parse_javascript_file
     result = generator.to_yaml
 
     # Write to the host app's config directory

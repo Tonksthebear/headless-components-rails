@@ -38,11 +38,13 @@ export default class extends ApplicationController {
   }
 
   enter() {
+    if (this.transitionedValue === true) return
     this.transitionedValue = true
     this.#transitionAll('enter')
   }
 
   leave() {
+    if (this.transitionedValue === false) return
     this.transitionedValue = false
     this.#transitionAll('leave')
   }
@@ -189,6 +191,7 @@ export default class extends ApplicationController {
 
   // Enhanced event dispatching
   dispatch(event, detail = {}) {
+    console.log(`dispatching ${event}`)
     this.element.dispatchEvent(
       new CustomEvent(`transition:${event}`, {
         bubbles: true,
