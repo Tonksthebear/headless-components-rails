@@ -1,2 +1,5 @@
 [tools]
 npm = "latest"
+
+[tasks.browserify_parser]
+run = "npx browserify lib/headless_view_component/parser/src/parser.js -o lib/headless_view_component/parser/dist/bundle.js"

@@ -14,13 +14,26 @@ module HeadlessViewComponent
       "Headless::MenuComponent::HeaderComponent" => { file: "dropdown", component: "DropdownHeader" }
     }.freeze
 
-    def self.generate(catalyst_dir = nil)
-      new(catalyst_dir).generate
-    end
+    # def self.generate(catalyst_dir = nil)
+    # new(catalyst_dir).generate
+    # end
 
     def initialize(catalyst_dir = nil)
       @catalyst_dir = catalyst_dir || File.expand_path("./catalyst-ui-kit", __dir__)
       @javascript_dir = File.join(@catalyst_dir, "javascript")
+    end
+
+    def parse_javascript_file
+      parser = Parser::JsxTailwindParser.new
+
+      COMPONENT_MAPPING.each do |headless_component, catalyst_info|
+        # Construct the file path
+        catalyst_file = File.join(@javascript_dir, "#{catalyst_info[:file]}.jsx")
+        next unless File.exist?(catalyst_file)
+        classes = parser.extract_classes_from_file(catalyst_file)
+        # binding.irb
+        exit
+      end
     end
 
     def generate
