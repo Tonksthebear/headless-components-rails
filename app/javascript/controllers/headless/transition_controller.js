@@ -52,7 +52,6 @@ export default class extends ApplicationController {
   // Handle all transitions (parent and children)
   async #transitionAll(direction) {
     if (!this.enabledValue) {
-      // If disabled, just update state without transitions
       this.transitionedValue = direction === 'enter'
       return
     }

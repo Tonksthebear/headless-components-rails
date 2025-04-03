@@ -1,5 +1,15 @@
 [tools]
 npm = "latest"
 
-[tasks.browserify_parser]
-run = "npx browserify lib/headless_view_component/parser/src/parser.js -o lib/headless_view_component/parser/dist/bundle.js"
+[tasks.prepare-parsers]
+description = "Prepare scrapers from ViewComponent files and merge merge build the bundle.js"
+run = "cd test/dummy && ./bin/rails headless_view_component:generate_parsers"
+
+[tasks.bundle]
+description = "Prepare javascript bundle"
+run = "npx browserify lib/headless_view_component/parser/src/parser.js -o lib/headless_view_component/parser/dist/bundle.js -t [ babelify ]"
+
+[tasks.watch-parser]
+description = "Watch for changes in the parser and rebuild the bundle"
+run = "mise watch bundle -w lib/headless_view_component/parser/src/parser.js"
+depends = ["prepare-parsers"]

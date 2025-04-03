@@ -6,49 +6,40 @@ module HeadlessViewComponent
     end
 
     def component_mapping
-      components_dir = Engine.root.join("app/components")
-      component_files = Dir.glob("#{components_dir}/**/*_component.rb")
+      headless_components = Headless::ApplicationComponent.subclasses
 
-      component_files.each do |file|
-        begin
-          require file
-        rescue StandardError => e
-          puts "Warning: Could not load #{file} - #{e.message}"
-        end
-      end
-
-      def find_subclasses(klass)
-        subclasses = klass.subclasses
-        subclasses + subclasses.flat_map { |sub| find_subclasses(sub) }
-      end
-
-      # Get all subclasses of Headless::ApplicationComponent
-      headless_components = find_subclasses(::Headless::ApplicationComponent)
-
-      # Output the results
       if headless_components.empty?
         puts "No subclasses of Headless::ApplicationComponent found."
       else
-        headless_components.reject { |klass| klass.jsx_mapping[:file].nil? }.map do |klass|
-          klass.jsx_mapping
+        headless_components.map do |klass|
+          component_name = klass.name.gsub("Component", "")
+          component_name = component_name.gsub("::", "")
+          component_name = component_name.gsub("Headless", "")
+          hash = klass.jsx_mapping
+          hash[:parser_function] = "parse" + component_name if klass.sidecar_files([ "parser.js" ]).any?
+          hash
         end.group_by { |mapping| mapping[:file] }
       end
     end
 
-    def parse_javascript_file(file)
+    def parse_javascript_file(file, mappings)
       parser = Parser::JsxTailwindParser.new
+      parsers = []
+      mappings.each do |mapping|
+        parsers << { component: mapping[:component], parser_function: mapping[:parser_function], view_component: mapping[:view_component] }
+      end
 
       # Construct the file path
       catalyst_file = File.join(@javascript_dir, "#{file}.jsx")
       return unless File.exist?(catalyst_file)
-      parser.extract_classes_from_file(catalyst_file)
+      parser.extract_classes_from_file(catalyst_file, { component_parsers: parsers })
     end
 
     def generate_mappings
-      result = { "headless" => {} }
+      result = {}
 
       component_mapping.map do |file, mappings|
-        parsed_classes = parse_javascript_file(file)
+        parsed_classes = parse_javascript_file(file, mappings)
 
         mappings.each do |mapping|
           path = mapping[:view_component]
@@ -57,20 +48,23 @@ module HeadlessViewComponent
             .split("::")
             .map(&:downcase)
 
-          # Only assign class_items to subcomponents (leaf nodes with path length > 1)
-          if path.length > 1
-            current = result["headless"]
-            # Traverse up to the second-to-last part, ensuring hashes
-            path[0..-2].each do |part|
-              current[part] ||= {}
-              current = current[part]
+
+          def set_nested(hash, keys, value)
+            current = hash
+            if keys.length > 1
+              keys[0..-2].each do |key|
+                current[key] ||= {}
+                current = current[key]
+              end
+              current[keys.last] = value
             end
-            current[path.last] = parsed_classes.dig(mapping[:component], "classLines")
           end
+
+          set_nested(result, path, parsed_classes&.dig(mapping[:component]))
         end
       end
 
-      result
+      { "headless" => result }
     end
 
     def to_yaml(data = generate_mappings, indent = 0)
