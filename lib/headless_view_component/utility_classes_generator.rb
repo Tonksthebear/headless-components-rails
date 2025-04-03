@@ -57,6 +57,8 @@ module HeadlessViewComponent
                 current = current[key]
               end
               current[keys.last] = value
+            elsif value
+              current[keys.last] = value
             end
           end
 
@@ -73,7 +75,7 @@ module HeadlessViewComponent
         if value.is_a?(Hash)
           yaml += "  " * indent + "#{key}:\n"
           yaml += to_yaml(value, indent + 1)
-        elsif value.is_a?(Array)
+        elsif value.is_a?(Array) && value.present?
           yaml += "  " * indent + "#{key}:\n"
           value.each do |line|
             yaml += "  " * (indent + 1) + "#{line}\n"

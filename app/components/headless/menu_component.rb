@@ -12,8 +12,6 @@ module Headless
     end
 
     class ButtonComponent < ApplicationComponent
-      jsx_mapping file: "dropdown", component: "DropdownButton"
-
       attr_reader :disabled, :auto_focus
 
       def initialize(disabled: false, auto_focus: false)
