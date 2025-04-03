@@ -47,5 +47,16 @@ module Headless
         super
       end
     end
+
+    class ShortcutComponent < ApplicationComponent
+      jsx_mapping file: "dropdown", component: "DropdownShortcut"
+
+      attr_reader :disabled
+
+      def initialize(disabled: false)
+        @disabled = disabled
+        super
+      end
+    end
   end
 end

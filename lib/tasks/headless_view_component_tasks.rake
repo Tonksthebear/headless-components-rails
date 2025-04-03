@@ -8,6 +8,19 @@ require_relative "../headless_view_component/utility_classes_generator"
 require_relative "../headless_view_component/parser/jsx_parser"
 
 namespace :headless_view_component do
+  def load_headless_view_components
+    components_dir = HeadlessViewComponent::Engine.root.join("app/components")
+    component_files = Dir.glob("#{components_dir}/**/*_component.rb")
+
+    component_files.each do |file|
+      begin
+        require file
+      rescue StandardError => e
+        puts "Warning: Could not load #{file} - #{e.message}"
+      end
+    end
+  end
+
   desc "Generate utility_classes.yml in the host app's config directory"
   task :generate_utility_classes, [ :catalyst_path ] do |t, args|
     # Default to the host app's root if no path is provided
@@ -26,6 +39,8 @@ namespace :headless_view_component do
       exit 1
     end
 
+    load_headless_view_components
+
     generator = HeadlessViewComponent::UtilityClassesGenerator.new(catalyst_path)
     result = generator.to_yaml
 
@@ -39,5 +54,26 @@ namespace :headless_view_component do
     )
 
     puts "Generated utility_classes.yml in #{config_dir}"
+  end
+
+  desc "Generate parsers.js in the lib/headless_view_component/parser directory"
+  task :generate_parsers do |args|
+    output_file = File.join(HeadlessViewComponent::Engine.root, "lib/headless_view_component/parser/src/parsers.js")
+    parser_file_content = "module.exports = {\n"
+
+    Headless::ApplicationComponent.subclasses.each do |view_component|
+      parser = view_component.sidecar_files([ "parser.js" ])&.first
+      next unless parser
+      component_name = view_component.name.gsub("Component", "")
+      component_name = component_name.gsub("::", "")
+      component_name = component_name.gsub("Headless", "")
+
+      parser_file_content += "  '#{component_name}': require('#{parser}'),\n"
+    end
+
+    parser_file_content += "};"
+
+    File.write(output_file, parser_file_content)
+    puts "Generated #{output_file}"
   end
 end
