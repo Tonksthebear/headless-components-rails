@@ -1,5 +1,6 @@
-<div class="<%= yass(headless: { menu: {items: :classes} }) %>" 
-     data-headless--menu-target="items"
+<div id="portal" data-controller="headless--menu--portal headless--transition" data-action="headless--menu--portal:menuOpened->headless--transition#enter headless--menu--portal:menuClosed->headless--transition#leave" class="<%= yass(headless: { menu: {items: :classes} }) %>" 
+     data-headless--menu--portal-target="items"
+     data-headless--menu--portal-headless--menu-outlet-target="#menu"
      data-headless--transition-target="child"
      data-hide-after-transition
      >

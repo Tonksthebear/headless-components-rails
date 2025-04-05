@@ -190,7 +190,6 @@ export default class extends ApplicationController {
 
   // Enhanced event dispatching
   dispatch(event, detail = {}) {
-    console.log(`dispatching ${event}`)
     this.element.dispatchEvent(
       new CustomEvent(`transition:${event}`, {
         bubbles: true,

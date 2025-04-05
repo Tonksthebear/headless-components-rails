@@ -1,18 +1,18 @@
 <%= render Headless::MenuComponent.new(open: true) do |menu| %>
-  <% menu.with_button do %>
+  <% menu.with_button do |button| %>
     Options
+    <% button.with_icon(icon: "chevron-down") %>
   <% end %>
 
   <% menu.with_items do |items| %>
     <% items.with_item do %>
-      Edit
-      <span class="ml-auto hidden font-sans text-xs group-data-[focus]:inline">⌘E</span>
+      View
     <% end %>
     <% items.with_item do %>
-      Duplicate
+      Edit
     <% end %>
     <% items.with_item(disabled: true) do %>
-      Archive
+      Delete
     <% end %>
   <% end %>
 <% end %>
