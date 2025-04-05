@@ -58,7 +58,15 @@ module HeadlessViewComponent
               end
               current[keys.last] = value
             elsif value
-              current[keys.last] = value
+              if value.is_a?(Hash)
+                if current[keys.last].present?
+                  current[keys.last] = current[keys.last].merge(value)
+                else
+                  current[keys.last] = value
+                end
+              else
+                current[keys.last] = value
+              end
             end
           end
 

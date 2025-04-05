@@ -8,6 +8,7 @@ gem "puma"
 gem "sqlite3"
 gem "view_component"
 
+gem "rails_heroicon"
 gem "classy-yaml"
 
 # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]

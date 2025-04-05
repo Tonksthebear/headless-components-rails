@@ -11,12 +11,20 @@ module Headless
       super
     end
 
-    class ButtonComponent < ApplicationComponent
-      attr_reader :disabled, :auto_focus
-
-      def initialize(disabled: false, auto_focus: false)
-        @disabled = disabled
-        @auto_focus = auto_focus
+    class ButtonComponent < Headless::ButtonComponent
+      def initialize(**options)
+        @options = options
+        @options.deep_merge!({
+          data: {
+            headless__menu_target: "button",
+            action: "headless--transition#toggle"
+          },
+          aria: {
+            expanded: "false"
+          },
+          onmouseover: "this.setAttribute('data-hover', '')",
+          onmouseout: "this.removeAttribute('data-hover')"
+        })
         super
       end
     end
