@@ -1,36 +1,8 @@
-import ApplicationController from "controllers/headless/application_controller"
-import { TokenListObserver } from "@hotwired/stimulus"
+import PortalApplicationController from "controllers/headless/portal_application_controller"
 
-export default class extends ApplicationController {
+export default class extends PortalApplicationController {
   static targets = ["items", "item"]
-  static outlets = ["headless--menu--portal"]
-
-  menuOpened() {
-    this.dispatch("menuOpened")
-    this.itemsTarget.setAttribute("data-open", "")
-    this.itemsTarget.removeAttribute("data-closed", "")
-    this.element.setAttribute("data-open", "")
-    this.element.focus()
-  }
-
-  menuClosed() {
-    this.dispatch("menuClosed")
-    this.itemsTarget.removeAttribute("data-open")
-    this.itemsTarget.setAttribute("data-closed", "")
-    this.element.removeAttribute("data-open")
-  }
-
-  focus(event) {
-    event.currentTarget.focus()
-    event.currentTarget.setAttribute("data-focus", "")
-    event.currentTarget.setAttribute("data-active", "")
-  }
-
-  blur(event) {
-    event.currentTarget.blur()
-    event.currentTarget.removeAttribute("data-focus")
-    event.currentTarget.removeAttribute("data-active")
-  }
+  static outlets = ["headless--menu--portal", "headless--floating"]
 
   select(event) {
     const item = event.currentTarget
@@ -72,24 +44,10 @@ export default class extends ApplicationController {
     }
   }
 
-  focusNextItem() {
-    const items = this.itemTargets
-    const currentIndex = items.indexOf(document.activeElement)
-    const nextIndex = (currentIndex + 1) % items.length
-    items[nextIndex].focus()
-  }
-
-  focusPreviousItem() {
-    const items = this.itemTargets
-    const currentIndex = items.indexOf(document.activeElement)
-    const previousIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1
-    items[previousIndex].focus()
-  }
-
-  returnToParent() {
-    this.headlessMenuOutlet.element.append(this.element)
-  }
+}
 
 
-
+returnToParent() {
+  this.headlessMenuOutlet.element.append(this.element)
+}
 }

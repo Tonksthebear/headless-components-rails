@@ -1,5 +1,10 @@
-<div id="portal" data-controller="headless--menu--portal headless--transition" data-action="headless--menu--portal:menuOpened->headless--transition#enter headless--menu--portal:menuClosed->headless--transition#leave" class="<%= yass(headless: { menu: {items: :classes} }) %>" 
-     data-headless--menu--portal-target="items"
+<div id="portal" 
+     class="<%= yass(headless: { menu: {items: :classes} }) %>" 
+     tabindex="-1"
+     role="menu"
+     data-controller="headless--portal headless--floating" 
+     data-action="transition:afterenter->headless--menu#focusMenu blur->headless--menu#testblur keydown.down->headless--menu#focusNextItem keydown.up->headless--menu#focusPreviousItem keydown.esc@document->headless--transition#leave"
+     data-headless--menu-target="items"
      data-headless--menu--portal-headless--menu-outlet-target="#menu"
      data-headless--transition-target="child"
      data-hide-after-transition
