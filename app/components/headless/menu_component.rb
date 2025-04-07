@@ -3,11 +3,13 @@ module Headless
     renders_one :button, "ButtonComponent"
     renders_one :items, "ItemsComponent"
 
-    attr_reader :open, :disabled
+    attr_reader :open, :disabled, :anchor, :portal
 
-    def initialize(open: false, disabled: false)
+    def initialize(open: false, disabled: false, anchor: {}, portal: false)
       @open = open
       @disabled = disabled
+      @anchor = anchor
+      @portal = portal
       super
     end
 
@@ -15,6 +17,7 @@ module Headless
       def initialize(**options)
         @options = options
         @options.deep_merge!({
+          tabindex: "0",
           data: {
             headless__menu_target: "button",
             action: "headless--transition#toggle"

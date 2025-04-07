@@ -153,7 +153,7 @@ export default class extends Controller {
           return [...new Set([...originalTargets, ...portaledTargets])]
         },
         configurable: true
-      });
+      })
 
       Object.defineProperty(controller, `${name}Target`, {
         get: function () {
@@ -168,7 +168,7 @@ export default class extends Controller {
           }
         },
         configurable: true
-      });
+      })
 
       Object.defineProperty(controller, `has${capitalize(name)}Target`, {
         get: function () {
@@ -176,7 +176,7 @@ export default class extends Controller {
           return controller.targets.has(name) || (portaledTargets[0] ? true : false)
         },
         configurable: true
-      });
+      })
     })
   }
 
@@ -189,20 +189,20 @@ export default class extends Controller {
         `${name}Target`,
         `${name}Targets`,
         `has${capitalize(name)}Target`
-      ];
+      ]
 
-      const originalDescriptors = {};
+      const originalDescriptors = {}
       propertiesToReset.forEach(prop => {
-        const descriptor = Object.getOwnPropertyDescriptor(proto, prop);
+        const descriptor = Object.getOwnPropertyDescriptor(proto, prop)
         if (descriptor) {
           originalDescriptors[prop] = {
             ...descriptor,
             configurable: true
-          };
+          }
         }
-      });
+      })
 
-      Object.defineProperties(controller, originalDescriptors);
+      Object.defineProperties(controller, originalDescriptors)
     })
   }
 

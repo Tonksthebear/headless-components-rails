@@ -44,10 +44,8 @@ export default class extends PortalApplicationController {
     }
   }
 
-}
 
-
-returnToParent() {
-  this.headlessMenuOutlet.element.append(this.element)
-}
+  returnToParent() {
+    this.headlessMenuOutlet.element.append(this.element)
+  }
 }

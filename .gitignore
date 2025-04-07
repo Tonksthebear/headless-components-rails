@@ -10,5 +10,6 @@
 /headlessui/
 /test/dummy/catalyst-ui-kit/
 /test/dummy/config/utility_classes.yml
+/test/dummy/app/assets/builds
 /test/dummy/tmp/
 /node_modules/
