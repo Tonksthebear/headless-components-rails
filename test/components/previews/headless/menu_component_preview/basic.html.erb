@@ -1,18 +1,20 @@
-<%= render Headless::MenuComponent.new(open: true) do |menu| %>
-  <% menu.with_button do |button| %>
-    Options
-    <% button.with_icon(icon: "chevron-down") %>
-  <% end %>
+<div class="h-full w-full flex items-center justify-center">
+  <%= render Headless::MenuComponent.new(open: true) do |menu| %>
+    <% menu.with_button do |button| %>
+      Options
+      <% button.with_icon(icon: "chevron-down") %>
+    <% end %>
 
-  <% menu.with_items do |items| %>
-    <% items.with_item do %>
-      View
-    <% end %>
-    <% items.with_item do %>
-      Edit
-    <% end %>
-    <% items.with_item(disabled: true) do %>
-      Delete
+    <% menu.with_items do |items| %>
+      <% items.with_item do %>
+        View
+      <% end %>
+      <% items.with_item do %>
+        Edit
+      <% end %>
+      <% items.with_item(disabled: true) do %>
+        Delete
+      <% end %>
     <% end %>
   <% end %>
-<% end %>
+</div>

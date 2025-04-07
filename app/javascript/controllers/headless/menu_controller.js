@@ -1,26 +1,31 @@
 import ApplicationController from "controllers/headless/application_controller"
-import { createFloating, setupFloating } from "headless/floating"
-import { createInteractions } from "headless/interactions"
-import { createInnerMiddleware } from "headless/inner"
+import { floatingControllerHelpers } from "headless/floating_controller_helpers"
 
 export default class extends ApplicationController {
   static targets = ["button", "items", "item", "example"]
-  static outlets = ["headless--floating", "headless--portal"]
+  static outlets = ["headless--portal", "headless--transition"]
   static values = {
-    open: Boolean,
-    disabled: Boolean,
-    placement: { type: String, default: "bottom" },
-    align: { type: String, default: "start" },
-    gap: { type: Number, default: 8 },
-    padding: { type: Number, default: 16 },
-    innerEnabled: { type: Boolean, default: false },
-    innerIndex: { type: Number, default: 0 },
-    innerPadding: { type: Number, default: 16 },
-    innerMinItemsVisible: { type: Number, default: 1 }
+    openAtStart: { type: Boolean, default: false },
+    portal: { type: Boolean, default: false },
+    ...floatingControllerHelpers.values
+  }
+
+  constructor(context) {
+    super(context)
+    Object.assign(this, floatingControllerHelpers);
   }
 
   connect() {
     top.menuController = this
+    this.portalValue = this.portalValue || this.hasAnchor()
+    this.searchQuery = ""
+    this.searchTimeout = null
+
+    if (this.openAtStartValue) {
+      this.headlessTransitionOutlet.enter()
+    } else {
+      this.headlessTransitionOutlet.leave()
+    }
   }
 
   headlessPortalOutletConnected(controller) {
@@ -29,21 +34,6 @@ export default class extends ApplicationController {
 
   headlessPortalOutletDisconnected(controller) {
     controller.desync(this)
-  }
-
-  headlessFloatingOutletConnected() {
-    console.log("headlessFloatingOutletConnected")
-    // this.setupFloating()
-  }
-
-  setupFloating() {
-    // Configure floating controller
-    this.headlessFloatingOutlet.placementValue = this.placementValue
-    this.headlessFloatingOutlet.alignValue = this.alignValue
-    this.headlessFloatingOutlet.gapValue = this.gapValue
-    this.headlessFloatingOutlet.paddingValue = this.paddingValue
-    this.headlessFloatingOutlet.openValue = this.openValue
-    this.headlessFloatingOutlet.disabledValue = this.disabledValue
   }
 
   menuOpened() {
@@ -56,15 +46,12 @@ export default class extends ApplicationController {
   }
 
   menuClosed() {
+    this.dispatch("menuClosed")
     this.buttonTarget.setAttribute("aria-expanded", "false")
     this.element.removeAttribute("data-active")
-
-    // Update floating controller if available
-    if (this.hasHeadlessFloatingOutlet) {
-      this.headlessFloatingOutlet.openValue = false
-    }
-
-    // this.headlessMenuPortalOutlet.menuClosed()
+    this.itemsTarget.removeAttribute("data-open")
+    this.itemsTarget.setAttribute("data-closed", "")
+    this.element.removeAttribute("data-open")
   }
 
   closeOnClickOutside(event) {
@@ -74,52 +61,13 @@ export default class extends ApplicationController {
   }
 
   sendPortal() {
-    document.body.appendChild(this.itemsTarget)
-    setupFloating({ reference: this.buttonTarget, floating: this.itemsTarget })
-    // this.#setupFloating()
+    this.portalValue && document.body.appendChild(this.itemsTarget)
+    this.setupFloating({ reference: this.buttonTarget, floating: this.itemsTarget })
   }
 
   retrievePortal() {
-    this.element.appendChild(this.itemsTarget)
-    this.floatingCleanup()
-  }
-
-  #setupFloating() {
-    let inner = null
-    if (this.innerEnabledValue) {
-      inner = createInnerMiddleware({
-        listRef: this.floatingTarget,
-        index: this.innerIndexValue,
-        minItemsVisible: this.innerMinItemsVisibleValue,
-        onOffsetChange: (offset) => {
-          this.dispatch("innerOffsetChange", { detail: { offset } })
-        }
-      })
-    }
-
-    // Set up floating positioning
-    this.floatingCleanup = createFloating({
-      reference: this.buttonTarget,
-      floating: this.itemsTarget,
-      placement: {
-        to: this.placementValue,
-        align: this.alignValue
-      },
-      enabled: true,
-      inner
-    })
-  }
-
-  menuClosed() {
-    this.dispatch("menuClosed")
-    this.itemsTarget.removeAttribute("data-open")
-    this.itemsTarget.setAttribute("data-closed", "")
-    this.element.removeAttribute("data-open")
-
-    // Update floating controller if available
-    if (this.hasHeadlessFloatingOutlet) {
-      this.headlessFloatingOutlet.openValue = false
-    }
+    this.portalValue && this.element.appendChild(this.itemsTarget)
+    this.cleanupFloating()
   }
 
   focusMenu() {
@@ -143,7 +91,6 @@ export default class extends ApplicationController {
     const currentIndex = items.indexOf(document.activeElement)
     const nextIndex = (currentIndex + 1) % items.length
     items[nextIndex].focus()
-
   }
 
   focusPreviousItem() {
@@ -151,5 +98,36 @@ export default class extends ApplicationController {
     const currentIndex = items.indexOf(document.activeElement)
     const previousIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1
     items[previousIndex].focus()
+  }
+
+  focusMatchedItem(event) {
+    if (event.key.length !== 1 || !event.key.match(/[a-z0-9]/i)) return
+
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout)
+    }
+
+    this.searchQuery += event.key.toLowerCase()
+
+    const items = this.itemTargets
+    const currentItem = document.activeElement
+    const currentIndex = items.includes(currentItem) ? items.indexOf(currentItem) : -1
+
+    const searchOrder = currentIndex === -1
+      ? items
+      : [...items.slice(currentIndex + 1), ...items.slice(0, currentIndex + 1)]
+
+    const matchedItem = searchOrder.find(item =>
+      item.textContent.trim().toLowerCase().startsWith(this.searchQuery)
+    )
+
+    if (matchedItem) {
+      matchedItem.focus()
+    }
+
+    this.searchTimeout = setTimeout(() => {
+      this.searchQuery = ""
+      this.searchTimeout = null
+    }, 350)
   }
 }
