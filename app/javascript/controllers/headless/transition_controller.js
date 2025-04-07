@@ -10,6 +10,7 @@ const TransitionState = {
 
 export default class extends ApplicationController {
   static targets = ['child']
+  static outlets = ["headless--portal"]
   static values = {
     transitioned: Boolean,
     startAnimation: Boolean,
@@ -25,6 +26,14 @@ export default class extends ApplicationController {
     this.childTransitions = new Set()
     this.activeTransitions = new Map() // Use a Map: element -> { id, controller }
     this.startAnimationValue && this.enter()
+  }
+
+  headlessPortalOutletConnected(controller) {
+    controller.sync(this)
+  }
+
+  headlessPortalOutletDisconnected(controller) {
+    controller.desync(this)
   }
 
   disconnect() {
@@ -61,7 +70,7 @@ export default class extends ApplicationController {
       this.cancelledValue = true
     }
 
-    this.dispatch(`before${direction}`)
+    this.#dispatchToAll(`before${direction}`)
 
     switch (this.modeValue) {
       case 'sequential':
@@ -74,7 +83,7 @@ export default class extends ApplicationController {
         await this.#transitionSync(direction)
     }
 
-    this.dispatch(`after${direction}`)
+    this.#dispatchToAll(`after${direction}`)
   }
 
   // All elements transition together
@@ -188,15 +197,15 @@ export default class extends ApplicationController {
     })
   }
 
-  // Enhanced event dispatching
-  dispatch(event, detail = {}) {
-    this.element.dispatchEvent(
-      new CustomEvent(`transition:${event}`, {
-        bubbles: true,
-        cancelable: true,
-        detail
-      })
-    )
+  #dispatchToAll(event, detail = {}) {
+    this.childTargets.forEach(child => {
+      this.#dispatchToChild(child, event, detail)
+    })
+    this.dispatch(event, { prefix: "transition", ...detail })
+  }
+
+  #dispatchToChild(child, event, detail = {}) {
+    this.dispatch(event, { target: child, bubbles: false, prefix: "transition", ...detail })
   }
 
   // Enhanced transition data update
@@ -317,10 +326,6 @@ export default class extends ApplicationController {
       if (this.activeTransitions.size === 0) {
         this.inFlightValue = false
       }
-
-      // Dispatch finished event
-      this.dispatch(`${direction}:finished`)
-
     } catch (error) {
       // Only catch AbortError specifically from navigation
       if (error.name === 'AbortError' && abortController.signal.reason === 'navigation') {

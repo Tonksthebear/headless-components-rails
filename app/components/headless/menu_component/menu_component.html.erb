@@ -1,4 +1,9 @@
-<div id="menu" tabindex="-1" data-controller="headless--menu headless--transition" data-headless--menu-headless--menu--portal-outlet="#portal" data-action="click@document->headless--menu#closeOnClickOutside transition:afterenter->headless--menu#menuOpened transition:afterleave->headless--menu#menuClosed headless--menu:leave->headless--transition#leave keydown.down->headless--menu#focusNextItem keydown.up->headless--menu#focusPreviousItem keydown.esc@document->headless--transition#leave">
+<div id="menu" 
+     data-controller="headless--menu headless--transition" 
+     data-headless--menu-headless--portal-outlet="#portal" 
+     data-headless--transition-headless--portal-outlet="#portal" 
+     data-headless--menu-headless--floating-outlet="#portal" 
+     data-action="click@document->headless--menu#closeOnClickOutside transition:beforeenter->headless--menu#sendPortal transition:afterenter->headless--menu#menuOpened transition:afterleave->headless--menu#menuClosed headless--menu:leave->headless--transition#leave transition:afterleave->headless--menu#retrievePortal">
   <%= button %>
   <%= items %>
 </div> 
