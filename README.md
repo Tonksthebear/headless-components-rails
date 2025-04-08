@@ -60,7 +60,7 @@ The aim is to follow the original Headless UI API as closely as possible. It wil
 
 ## Technical Highlights
 
-*   **Tailwind CSS Integration**: Leverages the [`Classy::Yaml`](https://github.com/Tonksthebear/classy-yaml) gem to define component structures and styles. This allows the [`tailwindcss-rails`](https://github.com/rails/tailwindcss-rails) gem to automatically detect and include the necessary Tailwind classes in your build.
+*   **Tailwind CSS Integration**: Leverages the [`Classy::Yaml`](https://github.com/Tonksthebear/classy-yaml) gem to define component styles in a central location. This allows the [`tailwindcss-rails`](https://github.com/rails/tailwindcss-rails) gem to be configured to detect and include the necessary Tailwind classes in your build.
 *   **Node-Free JSX Parsing**: Utilizes custom `{component_name}_parser.js` sidecar files alongside [`mini_racer`](https://github.com/rubyjs/mini_racer) and Babel. Each component can have its own parser (e.g., `menu_component/menu_component.parser.js`) nested within its directory structure. This enables parsing of JSX-like definitions within the gem for component structure and logic, *without requiring Node.js* to be installed in your development or production environment, and keeps parsing logic manageable and component-specific.
 *   **Importmaps Ready**: Designed to work seamlessly with Rails applications using Importmaps for JavaScript management.
 *   **Complex Interaction Proof**: The Dropdown component implementation successfully demonstrates handling intricate UI patterns like Floating UI integration and custom Stimulus-based portaling (inspired by React Portals, implemented in `portal_controller.js`).
