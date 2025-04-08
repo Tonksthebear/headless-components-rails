@@ -1,0 +1,20 @@
+headless:
+  menu:
+    shortcut:
+      classes:
+      kbd: "ml-auto hidden font-sans text-xs text-white/50 group-data-[focus]:inline"
+    item:
+      classes:
+        - "group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-gray-700"
+    items:
+      classes:
+        - "w-52 origin-top-right rounded-xl border border-white/5 bg-gray-500 p-1 text-sm/6 text-white transition duration-100 ease-out focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+        # Anchor positioning
+        - "[--anchor-gap:--spacing(2)] [--anchor-padding:--spacing(2)] [--anchor-offset:10px]"
+  checkbox:
+  button:
+    base:
+      - "inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold focus:outline-none data-[focus]:outline-1"
+    solid:
+      - "shadow-inner shadow-white/10"
+    light: "text-white bg-gray-800 data-[hover]:bg-gray-700 data-[open]:bg-gray-700 data-[focus]:outline-white"

@@ -2,7 +2,7 @@
   <%= render Headless::MenuComponent.new(open: true) do |menu| %>
     <% menu.with_button do |button| %>
       Options
-      <% button.with_icon(icon: "chevron-down") %>
+      <% button.with_icon(icon: "chevron-down", class: "size-4 fill-white/60") %>
     <% end %>
 
     <% menu.with_items do |items| %>

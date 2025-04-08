@@ -22,9 +22,8 @@ namespace :headless_view_component do
   end
 
   desc "Generate utility_classes.yml in the host app's config directory"
-  task :generate_utility_classes, [ :catalyst_path ] do |t, args|
-    # Default to the host app's root if no path is provided
-    catalyst_path = args[:catalyst_path] || Rails.root.join("catalyst-ui-kit")
+  task generate_utility_classes: :environment do
+    catalyst_path = ENV["catalyst_path"] || Rails.root.join("catalyst-ui-kit")
 
     unless File.directory?(catalyst_path)
       puts "Error: Catalyst UI Kit directory not found at #{catalyst_path}"
@@ -49,10 +48,15 @@ namespace :headless_view_component do
     FileUtils.mkdir_p(config_dir)
 
     File.write(
-      config_dir.join("utility_classes.yml"),
+      config_dir.join("headless_view_component.yml"),
       result
     )
 
-    puts "Generated utility_classes.yml in #{config_dir}"
+    puts "Generated headless_view_component.yml in #{config_dir}"
+  end
+
+  desc "Install Headless View Component"
+  task :install do
+    Rails::Command.invoke :generate, [ "headless_view_component:install" ]
   end
 end

@@ -9,7 +9,7 @@
 /test/dummy/storage/
 /headlessui/
 /test/dummy/catalyst-ui-kit/
-/test/dummy/config/utility_classes.yml
+/test/dummy/config/headless_view_component.yml
 /test/dummy/app/assets/builds
 /test/dummy/tmp/
 /node_modules/

@@ -43,6 +43,7 @@ export default class extends ApplicationController {
     this.itemsTarget.setAttribute("data-open", "")
     this.itemsTarget.removeAttribute("data-closed", "")
     this.element.setAttribute("data-open", "")
+    this.focusMenu()
   }
 
   menuClosed() {
@@ -129,5 +130,11 @@ export default class extends ApplicationController {
       this.searchQuery = ""
       this.searchTimeout = null
     }, 350)
+  }
+
+  selectItem() {
+    const items = this.itemTargets
+    const currentIndex = items.indexOf(document.activeElement)
+    items[currentIndex].click()
   }
 }

@@ -1,9 +1,15 @@
 module HeadlessViewComponent
   class Engine < ::Rails::Engine
+    require "classy_yaml"
+
+    rake_tasks do
+      load "headless_view_component/tasks.rb"
+    end
+
     config.to_prepare do
       Classy::Yaml.setup do |config|
-        config.engine_files << Engine.root.join("config/headless_view_component/utility_classes.yml")
-        config.extra_files << Rails.root.join("config/headless_view_component/utility_classes.yml")
+        config.engine_files << Engine.root.join("config/headless_view_component.yml")
+        config.extra_files << Rails.root.join("config/headless_view_component.yml")
       end
     end
 
