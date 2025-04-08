@@ -2,7 +2,7 @@
 
 **Note:** This gem is currently a proof of concept.
 
-Headless brings the power of [Headless UI](https://headlessui.com) to Rails developers by providing a set of unstyled, fully accessible UI components built with ViewComponent and Stimulus.
+Headless Components Rails brings the power of [Headless UI](https://headlessui.com) to Rails developers by providing a set of unstyled, fully accessible UI components built with ViewComponent and Stimulus.
 
 It aims to offer a seamless way to integrate the highly-regarded Headless UI patterns into your Rails applications, allowing you to build complex interfaces with maximum flexibility in styling.
 
@@ -14,7 +14,7 @@ Currently, the primary focus has been on implementing the **Dropdown Menu** comp
 
 ## Menu Component Example
 ```erb
-  <%= render Headless::MenuComponent.new(open: true) do |menu| %>
+  <%= render Headless::MenuComponent.new do |menu| %>
     <% menu.with_button do |button| %>
       Options
       <% button.with_icon(icon: "chevron-down") %>
@@ -38,11 +38,11 @@ Currently, the primary focus has been on implementing the **Dropdown Menu** comp
 
 ## Catalyst Integration
 
-Headless also supports integrating styles from [Tailwind Catalyst](https://catalyst.tailwindui.com/). If you provide a local copy of the Catalyst source code, the gem can scrape the necessary styles to apply the official Tailwind UI look and feel to the components.
+Headless Components Rails also supports integrating styles from [Tailwind Catalyst](https://catalyst.tailwindui.com/). If you provide a local copy of the Catalyst source code, the gem can scrape the necessary styles to apply the official Tailwind UI look and feel to the components.
 
 In order to do so, download Catalyst, then run
 ```bash
-bin/rails headless:generate_utility_classes path_to_catalyst_project
+bin/rails headless:generate_utility_classes catalyst_path=path_to_catalyst_project
 ```
 The path defaults to assuming it's in your root directory.
 
