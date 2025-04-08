@@ -1,4 +1,4 @@
-# Headless
+# Headless Components Rails
 
 **Note:** This gem is currently a proof of concept.
 
