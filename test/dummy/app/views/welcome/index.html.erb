@@ -2,9 +2,22 @@
 
 <div class="mt-8">
   <h2>Menu Component Demo</h2>
-  <%= render Headless::MenuComponent.new(open: true) do %>
-    <div class="p-4 bg-white shadow rounded-lg">
-      <p>This is a menu component content</p>
-    </div>
+    <%= render Headless::MenuComponent.new do |menu| %>
+    <% menu.with_button do |button| %>
+      Options
+      <% button.with_icon(icon: "chevron-down") %>
+    <% end %>
+
+    <% menu.with_items do |items| %>
+      <% items.with_item do %>
+        View
+      <% end %>
+      <% items.with_item do %>
+        Edit
+      <% end %>
+      <% items.with_item(disabled: true) do %>
+        Delete
+      <% end %>
+    <% end %>
   <% end %>
 </div> 

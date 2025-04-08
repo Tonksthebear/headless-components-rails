@@ -85,7 +85,11 @@ For Tailwind v4 configuration
 ```css
 @import "tailwindcss";
 
-@source "config/headless.yml";
+# Used for forcing certain animations into hidden state
+@source inline("!hidden");
+
+# May need to change the relative location of where config/headless.yml is relative to your stylesheet
+@source "../../config/headless.yml";
 ```
 Tailwind should now also search the yaml file being used for styling.
 
