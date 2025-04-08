@@ -70,7 +70,7 @@ The aim is to follow the original Headless UI API as closely as possible. It wil
 As this is currently a proof of concept, install it directly from GitHub. **It also assume your project has importmaps, stimulus, ViewComponent, and tailwind installed. It is not validating for this yet, so please be sure you have them installed.** Add this line to your application's Gemfile:
 
 ```ruby
-gem "headless", github: "Tonksthebear/headless"
+gem "headless", git: "https://github.com/Tonksthebear/headless-components-rails.git"
 ```
 
 And then execute:
