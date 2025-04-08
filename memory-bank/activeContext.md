@@ -1,4 +1,4 @@
-# Active Context: HeadlessViewComponent
+# Active Context: Headless
 
 ## Current Work Focus
 1. **Menu Component Conversion**

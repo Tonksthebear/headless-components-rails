@@ -1,4 +1,4 @@
-# System Patterns: HeadlessViewComponent
+# System Patterns: Headless
 
 ## Architecture Overview
 The gem follows a layered architecture pattern with clear separation between:

@@ -1,8 +1,8 @@
-# HeadlessViewComponent
+# Headless
 
 **Note:** This gem is currently a proof of concept.
 
-HeadlessViewComponent brings the power of [Headless UI](https://headlessui.com) to Rails developers by providing a set of unstyled, fully accessible UI components built with ViewComponent and Stimulus.
+Headless brings the power of [Headless UI](https://headlessui.com) to Rails developers by providing a set of unstyled, fully accessible UI components built with ViewComponent and Stimulus.
 
 It aims to offer a seamless way to integrate the highly-regarded Headless UI patterns into your Rails applications, allowing you to build complex interfaces with maximum flexibility in styling.
 
@@ -38,15 +38,15 @@ Currently, the primary focus has been on implementing the **Dropdown Menu** comp
 
 ## Catalyst Integration
 
-HeadlessViewComponent also supports integrating styles from [Tailwind Catalyst](https://catalyst.tailwindui.com/). If you provide a local copy of the Catalyst source code, the gem can scrape the necessary styles to apply the official Tailwind UI look and feel to the components.
+Headless also supports integrating styles from [Tailwind Catalyst](https://catalyst.tailwindui.com/). If you provide a local copy of the Catalyst source code, the gem can scrape the necessary styles to apply the official Tailwind UI look and feel to the components.
 
 In order to do so, download Catalyst, then run
 ```bash
-bin/rails headless_view_component:generate_utility_classes path_to_catalyst_project
+bin/rails headless:generate_utility_classes path_to_catalyst_project
 ```
 The path defaults to assuming it's in your root directory.
 
-This will generate a Classy::Yaml file at `config/headless_view_component.yml` that will automatically be included for referencing in your app.
+This will generate a Classy::Yaml file at `config/headless.yml` that will automatically be included for referencing in your app.
 
 ## Portals
 In React, portals allow an HTML node to exist in the DOM separate from the parent, but maintain hierarchy as a child from within the shadow DOM. This can be extremely helpful with certain components, such as dropdowns and dialog/modal components so that they can escape from the inherited styles of the parent tree.
@@ -70,21 +70,21 @@ The aim is to follow the original Headless UI API as closely as possible. It wil
 As this is currently a proof of concept, install it directly from GitHub. **It also assume your project has importmaps, stimulus, ViewComponent, and tailwind installed. It is not validating for this yet, so please be sure you have them installed.** Add this line to your application's Gemfile:
 
 ```ruby
-gem "headless_view_component", github: "Tonksthebear/headless_view_component"
+gem "headless", github: "Tonksthebear/headless"
 ```
 
 And then execute:
 ```bash
-bin/rails headless_view_component:install 
+bin/rails headless:install 
 ```
 
-This will install a default `config/headless_view_component.yml` with basic styles that Headless UI provides. Don't forget, this can be overridden with your premium Catalyst styles for Tailwind Plus customers.
+This will install a default `config/headless.yml` with basic styles that Headless UI provides. Don't forget, this can be overridden with your premium Catalyst styles for Tailwind Plus customers.
 
 For Tailwind v4 configuration
 ```css
 @import "tailwindcss";
 
-@source "config/headless_view_component.yml";
+@source "config/headless.yml";
 ```
 Tailwind should now also search the yaml file being used for styling.
 

@@ -1,15 +1,15 @@
 # desc "Explaining what the task does"
-# task :headless_view_component do
+# task :headless do
 #   # Task goes here
 # end
 
 require "yaml"
-require_relative "../headless_view_component/utility_classes_generator"
-require_relative "../headless_view_component/parser/jsx_parser"
+require_relative "../headless/utility_classes_generator"
+require_relative "../headless/parser/jsx_parser"
 
-namespace :headless_view_component do
-  def load_headless_view_components
-    components_dir = HeadlessViewComponent::Engine.root.join("app/components")
+namespace :headless do
+  def load_headlesss
+    components_dir = Headless::Engine.root.join("app/components")
     component_files = Dir.glob("#{components_dir}/**/*_component.rb")
 
     component_files.each do |file|
@@ -38,9 +38,9 @@ namespace :headless_view_component do
       exit 1
     end
 
-    load_headless_view_components
+    load_headlesss
 
-    generator = HeadlessViewComponent::UtilityClassesGenerator.new(catalyst_path)
+    generator = Headless::UtilityClassesGenerator.new(catalyst_path)
     result = generator.to_yaml
 
     # Write to the host app's config directory
@@ -48,15 +48,15 @@ namespace :headless_view_component do
     FileUtils.mkdir_p(config_dir)
 
     File.write(
-      config_dir.join("headless_view_component.yml"),
+      config_dir.join("headless.yml"),
       result
     )
 
-    puts "Generated headless_view_component.yml in #{config_dir}"
+    puts "Generated headless.yml in #{config_dir}"
   end
 
   desc "Install Headless View Component"
   task :install do
-    Rails::Command.invoke :generate, [ "headless_view_component:install" ]
+    Rails::Command.invoke :generate, [ "headless:install" ]
   end
 end

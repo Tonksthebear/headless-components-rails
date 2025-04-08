@@ -1,4 +1,4 @@
-# Progress: HeadlessViewComponent
+# Progress: Headless
 
 ## What Works
 1. **Project Structure**

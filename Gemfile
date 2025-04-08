@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in headless_view_component.gemspec.
+# Specify your gem's dependencies in headless.gemspec.
 gemspec
 
 gem "puma"

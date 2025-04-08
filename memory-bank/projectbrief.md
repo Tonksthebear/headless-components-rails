@@ -1,7 +1,7 @@
-# Project Brief: HeadlessViewComponent
+# Project Brief: Headless
 
 ## Overview
-HeadlessViewComponent is a Ruby gem that provides a framework for building headless UI components in Rails applications by converting HeadlessUI components to use Stimulus.js and Rails ViewComponent. It aims to maintain the same powerful, accessible, and unstyled components while providing a Rails-native experience.
+Headless is a Ruby gem that provides a framework for building headless UI components in Rails applications by converting HeadlessUI components to use Stimulus.js and Rails ViewComponent. It aims to maintain the same powerful, accessible, and unstyled components while providing a Rails-native experience.
 
 ## Core Requirements
 1. Conversion of HeadlessUI components to Stimulus.js and ViewComponent

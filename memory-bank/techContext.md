@@ -1,4 +1,4 @@
-# Technical Context: HeadlessViewComponent
+# Technical Context: Headless
 
 ## Technologies Used
 1. **Core Technologies**
@@ -24,7 +24,7 @@
 2. **Installation**
    ```bash
    git clone [repository-url]
-   cd headless_view_component
+   cd headless
    bundle install
    ```
 

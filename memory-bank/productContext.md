@@ -1,10 +1,10 @@
-# Product Context: HeadlessViewComponent
+# Product Context: Headless
 
 ## Problem Statement
 Rails developers want to use HeadlessUI's powerful, accessible components but need a Rails-native solution that integrates well with ViewComponent and Stimulus.js. The current HeadlessUI implementation is primarily for React, making it difficult to use in Rails applications while maintaining the same level of accessibility and flexibility.
 
 ## Solution
-HeadlessViewComponent provides a Rails-native implementation of HeadlessUI components by:
+Headless provides a Rails-native implementation of HeadlessUI components by:
 - Converting HeadlessUI components to use Stimulus.js for behavior
 - Implementing components using Rails ViewComponent
 - Maintaining the same accessibility features

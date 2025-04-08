@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
-@source "../../../config/headless_view_component.yml";
+@source "../../../config/headless.yml";
 @source "../../../../../app";
 @source "../../../../../test/components/previews";

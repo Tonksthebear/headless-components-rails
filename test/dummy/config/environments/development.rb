@@ -1,8 +1,8 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  config.lookbook.preview_paths << HeadlessViewComponent::Engine.root.join("test/components/previews")
-  config.lookbook.component_paths << HeadlessViewComponent::Engine.root.join("app/components")
+  config.lookbook.preview_paths << Headless::Engine.root.join("test/components/previews")
+  config.lookbook.component_paths << Headless::Engine.root.join("app/components")
   config.lookbook.preview_controller = "ComponentPreviewController"
   # Settings specified here will take precedence over those in config/application.rb.
 

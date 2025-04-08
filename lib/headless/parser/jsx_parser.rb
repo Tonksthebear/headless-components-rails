@@ -1,10 +1,10 @@
 require "mini_racer"
 
-module HeadlessViewComponent
+module Headless
   module Parser
     class JsxTailwindParser
       def initialize
-        @root = HeadlessViewComponent::Engine.root
+        @root = Headless::Engine.root
         @context = MiniRacer::Context.new
         load_dependencies
         load_default_parsers
@@ -12,13 +12,13 @@ module HeadlessViewComponent
       end
 
       def load_dependencies
-        @context.load(@root.join("lib/headless_view_component/parser/src/babel.min.js")) # Contains extractTailwindClasses()
-        @context.load(@root.join("lib/headless_view_component/parser/src/helpers.js")) # Contains getParentObject()
+        @context.load(@root.join("lib/headless/parser/src/babel.min.js")) # Contains extractTailwindClasses()
+        @context.load(@root.join("lib/headless/parser/src/helpers.js")) # Contains getParentObject()
       end
 
       def load_default_parsers
-        @context.load(@root.join("lib/headless_view_component/parser/src/default_parser.js")) # Contains defaultParser()
-        @context.load(@root.join("lib/headless_view_component/parser/src/parser.js")) # Contains extractTailwindClasses()
+        @context.load(@root.join("lib/headless/parser/src/default_parser.js")) # Contains defaultParser()
+        @context.load(@root.join("lib/headless/parser/src/parser.js")) # Contains extractTailwindClasses()
       end
 
       def load_component_parsers

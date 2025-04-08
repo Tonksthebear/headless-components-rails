@@ -1,4 +1,4 @@
-module HeadlessViewComponent
+module Headless
   class UtilityClassesGenerator
     def initialize(catalyst_dir = nil)
       @catalyst_dir = catalyst_dir || File.expand_path("./catalyst-ui-kit", __dir__)

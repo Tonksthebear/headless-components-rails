@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    headless_view_component (0.1.0)
+    headless-components-rails (0.1.0)
       mini_racer
       rails (>= 8.0.2)
       rails_heroicon
@@ -327,7 +327,7 @@ PLATFORMS
 
 DEPENDENCIES
   classy-yaml
-  headless_view_component!
+  headless-components-rails!
   importmap-rails (~> 2.1)
   lookbook (>= 2.3.8)
   propshaft
