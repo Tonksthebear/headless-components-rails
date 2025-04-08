@@ -1,6 +1,7 @@
 # Headless Components Rails
 
-**Note:** This gem is currently a proof of concept.
+>[!WARNING]
+>This gem is early stages and currently a proof of concept.
 
 Headless Components Rails brings the power of [Headless UI](https://headlessui.com) to Rails developers by providing a set of unstyled, fully accessible UI components built with ViewComponent and Stimulus.
 
