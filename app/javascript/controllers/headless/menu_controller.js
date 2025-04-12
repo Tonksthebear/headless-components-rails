@@ -7,7 +7,7 @@ export default class extends ApplicationController {
   static values = {
     openAtStart: { type: Boolean, default: false },
     portal: { type: Boolean, default: false },
-    ...floatingControllerHelpers.values
+    activeIndex: { type: Number, default: -1 }
   }
 
   constructor(context) {
@@ -28,6 +28,15 @@ export default class extends ApplicationController {
     }
   }
 
+  activeIndexValueChanged(index, previousIndex) {
+    if (previousIndex >= 0) {
+      this.unfocusItem(this.itemTargets[previousIndex])
+    }
+    if (index >= 0) {
+      this.focusItem(this.itemTargets[index])
+    }
+  }
+
   headlessPortalOutletConnected(controller) {
     controller.sync(this)
   }
@@ -39,6 +48,8 @@ export default class extends ApplicationController {
   menuOpened() {
     this.dispatch("menuOpened")
     this.buttonTarget.setAttribute("aria-expanded", "true")
+    this.buttonTarget.setAttribute("data-open", "")
+    this.buttonTarget.setAttribute("data-active", "")
     this.element.setAttribute("data-active", "")
     this.itemsTarget.setAttribute("data-open", "")
     this.itemsTarget.removeAttribute("data-closed", "")
@@ -49,6 +60,8 @@ export default class extends ApplicationController {
   menuClosed() {
     this.dispatch("menuClosed")
     this.buttonTarget.setAttribute("aria-expanded", "false")
+    this.buttonTarget.removeAttribute("data-open")
+    this.buttonTarget.removeAttribute("data-active")
     this.element.removeAttribute("data-active")
     this.itemsTarget.removeAttribute("data-open")
     this.itemsTarget.setAttribute("data-closed", "")
@@ -72,13 +85,22 @@ export default class extends ApplicationController {
   }
 
   focusMenu() {
+    this.activeIndexValue = -1
     this.itemsTarget.focus()
   }
 
-  focus(event) {
-    event.currentTarget.focus()
-    event.currentTarget.setAttribute("data-focus", "")
-    event.currentTarget.setAttribute("data-active", "")
+  unfocusItem(item) {
+    item.removeAttribute("data-focus")
+    item.removeAttribute("data-active")
+  }
+
+  focusItem(item) {
+    item.setAttribute("data-focus", "")
+    item.setAttribute("data-active", "")
+  }
+
+  focus({ currentTarget }) {
+    this.activeIndexValue = this.itemTargets.indexOf(currentTarget)
   }
 
   blur(event) {
@@ -88,17 +110,19 @@ export default class extends ApplicationController {
   }
 
   focusNextItem() {
-    const items = this.itemTargets
-    const currentIndex = items.indexOf(document.activeElement)
-    const nextIndex = (currentIndex + 1) % items.length
-    items[nextIndex].focus()
+    const nextIndex = this.activeIndexValue + 1
+    if (nextIndex < this.itemTargets.length) {
+      this.activeIndexValue = nextIndex
+    }
   }
 
   focusPreviousItem() {
-    const items = this.itemTargets
-    const currentIndex = items.indexOf(document.activeElement)
-    const previousIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1
-    items[previousIndex].focus()
+    const previousIndex = this.activeIndexValue - 1
+    if (previousIndex >= 0) {
+      this.activeIndexValue = previousIndex
+    } else if (previousIndex == -2) {
+      this.activeIndexValue = this.itemTargets.length - 1
+    }
   }
 
   focusMatchedItem(event) {
@@ -123,7 +147,7 @@ export default class extends ApplicationController {
     )
 
     if (matchedItem) {
-      matchedItem.focus()
+      this.activeIndexValue = this.itemTargets.indexOf(matchedItem)
     }
 
     this.searchTimeout = setTimeout(() => {
@@ -133,8 +157,6 @@ export default class extends ApplicationController {
   }
 
   selectItem() {
-    const items = this.itemTargets
-    const currentIndex = items.indexOf(document.activeElement)
-    items[currentIndex].click()
+    this.itemTargets[this.activeIndexValue].click()
   }
 }

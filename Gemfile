@@ -10,6 +10,7 @@ gem "view_component"
 
 gem "rails_heroicon"
 gem "classy-yaml"
+gem "erb-formatter"
 
 # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
 gem "rubocop-rails-omakase", require: false

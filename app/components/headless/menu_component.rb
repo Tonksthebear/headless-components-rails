@@ -1,59 +1,33 @@
 module Headless
   class MenuComponent < ApplicationComponent
-    renders_one :button, "ButtonComponent"
-    renders_one :items, "ItemsComponent"
-
     attr_reader :open, :disabled, :anchor, :portal
+    renders_one :button, "Headless::MenuComponent::ButtonComponent"
+    renders_one :items, Headless::Menu::ItemsComponent
 
-    def initialize(open: false, disabled: false, anchor: {}, portal: false)
+    def initialize(open: false, disabled: false, anchor: {}, portal: false, **options)
       @open = open
       @disabled = disabled
       @anchor = anchor
       @portal = portal
-      super
+      super(**options)
     end
 
     class ButtonComponent < Headless::ButtonComponent
       def initialize(**options)
-        @options = options
-        @options.deep_merge!({
+        options.deep_merge!({
           tabindex: "0",
           data: {
             headless__menu_target: "button",
             action: "headless--transition#toggle"
           },
           aria: {
-            expanded: "false"
+            expanded: "false",
+            haspopup: "menu"
           },
           onmouseover: "this.setAttribute('data-hover', '')",
           onmouseout: "this.removeAttribute('data-hover')"
         })
-        super
-      end
-    end
-
-    class ItemsComponent < ApplicationComponent
-      jsx_mapping file: "dropdown", component: "DropdownMenu"
-
-      renders_many :items, "Headless::MenuComponent::ItemComponent"
-
-      attr_reader :static, :unmount
-
-      def initialize(static: false, unmount: true)
-        @static = static
-        @unmount = unmount
-        super
-      end
-    end
-
-    class ItemComponent < ApplicationComponent
-      jsx_mapping file: "dropdown", component: "DropdownItem"
-
-      attr_reader :disabled
-
-      def initialize(disabled: false)
-        @disabled = disabled
-        super
+        super(**options)
       end
     end
 
@@ -62,9 +36,9 @@ module Headless
 
       attr_reader :disabled
 
-      def initialize(disabled: false)
+      def initialize(disabled: false, **options)
         @disabled = disabled
-        super
+        super(**options)
       end
     end
   end

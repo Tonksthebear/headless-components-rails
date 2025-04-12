@@ -10,17 +10,20 @@ module Headless
     def initialize(color: :light, style: :solid, **options)
       @color = color
       @style = style
-      @options = options
+      super(**options)
     end
 
     def merged_options
-      @options[:class] = class_names(@options[:class], yass(headless: { button: [ @color, @style ] }))
       @options.deep_merge!({
         onmouseover: "this.setAttribute('data-hover', '')",
         onmouseout: "this.removeAttribute('data-hover')"
       })
 
       @options
+    end
+
+    def classes
+      merge_classes!(yass(headless: { button: [ @color, @style ] }))
     end
 
     def render_icon
@@ -39,7 +42,7 @@ module Headless
       jsx_mapping file: "button", component: "TouchTarget"
 
       def call
-        tag.span(class: yass(skip_base: true, headless: { button: :touchtarget }))
+        tag.span(class: yass(skip_base: true, headless: { button: :touchtarget }), aria: { hidden: true })
       end
     end
   end

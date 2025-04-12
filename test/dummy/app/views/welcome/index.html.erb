@@ -1,23 +1,35 @@
 <h1>Welcome to Headless View Component Demo</h1>
+<div class="bg-black h-full w-full">
+  <div class="relative min-h-full antialiased">
+    <div class="relative bg-white/5">
+      <div class="absolute inset-[35%] block rounded-full bg-white/15 blur-2xl" aria-hidden="true" inert=""></div>
+      <div class="relative flex min-h-screen w-full flex-col items-center justify-center">
+        <%= render Headless::MenuComponent.new(open: true) do |menu| %>
+          <%= menu.with_button(class: "inline-flex items-center gap-2 rounded-md bg-neutral-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-neutral-600 data-[open]:bg-neutral-600 data-[focus]:outline-1 data-[focus]:outline-white") do |button| %>
+            Options
+            <% button.with_icon(icon: "chevron-down", class: "size-4 fill-white/60") %>
+          <% end %>
 
-<div class="mt-8">
-  <h2>Menu Component Demo</h2>
-    <%= render Headless::MenuComponent.new do |menu| %>
-    <% menu.with_button do |button| %>
-      Options
-      <% button.with_icon(icon: "chevron-down") %>
-    <% end %>
-
-    <% menu.with_items do |items| %>
-      <% items.with_item do %>
-        View
-      <% end %>
-      <% items.with_item do %>
-        Edit
-      <% end %>
-      <% items.with_item(disabled: true) do %>
-        Delete
-      <% end %>
-    <% end %>
-  <% end %>
-</div> 
+          <%= menu.with_items(anchor_to: "bottom end", class: "w-52 origin-top-right rounded-xl border border-white/5 bg-white/5 p-1 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0") do |items| %>
+            <%= items.with_item_button class: "group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10", data: { action: "click->headless--menu#test" } do %>
+              <%= heroicon "pencil", class: "size-4 fill-white/30" %>
+              Edit
+            <% end %>
+            <%= items.with_item_button class: "group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10" do %>
+              <%= heroicon "square-2-stack", class: "size-4 fill-white/30" %>
+              Duplicate
+            <% end %>
+            <%= items.with_item_button class: "group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10", disabled: true do %>
+              <%= heroicon "trash", class: "size-4 fill-white/30" %>
+              Delete
+            <% end %>
+            <%= items.with_item_link "https://www.google.com", class: "group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10" do %>
+              <%= heroicon "link", class: "size-4 fill-white/30" %>
+              Link
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
