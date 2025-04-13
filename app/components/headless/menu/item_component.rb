@@ -5,9 +5,8 @@ module Headless
 
       attr_reader :type, :disabled, :block
 
-      def initialize(type: :button, disabled: false, **options, &block)
+      def initialize(type: :button, **options, &block)
         @type = type
-        @disabled = disabled
         @block = block
         super(**options)
       end
@@ -25,9 +24,14 @@ module Headless
               focus->headless--menu#focus
               blur->headless--menu#blur
             "
-          },
-          disabled: disabled
+          }
         })
+      end
+
+      def call
+        tag.send(type, **options) do
+          content
+        end
       end
     end
   end

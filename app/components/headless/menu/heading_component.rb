@@ -8,7 +8,7 @@ module Headless
         super(**options)
       end
 
-      before_render do
+      def before_render
         merge_classes!(yass(headless: { menu: { heading: :classes } }))
         merge_options!({ id: @id, role: "presentation" })
       end

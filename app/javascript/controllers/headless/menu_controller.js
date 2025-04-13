@@ -1,5 +1,6 @@
 import ApplicationController from "controllers/headless/application_controller"
 import { floatingControllerHelpers } from "headless/floating_controller_helpers"
+import { TokenListObserver } from "@hotwired/stimulus"
 
 export default class extends ApplicationController {
   static targets = ["button", "items", "item", "example"]
@@ -16,16 +17,25 @@ export default class extends ApplicationController {
   }
 
   connect() {
-    top.menuController = this
     this.portalValue = this.portalValue || this.hasAnchor()
     this.searchQuery = ""
     this.searchTimeout = null
+    this.disabledObserver = this.#disabledObserver()
+    this.disabledObserver.observe(this.element, {
+      attributes: true,
+      attributeFilter: ["disabled"],
+      subtree: true
+    })
 
     if (this.openAtStartValue) {
       this.headlessTransitionOutlet.enter()
     } else {
       this.headlessTransitionOutlet.leave()
     }
+  }
+
+  disconnect() {
+    this.disabledObserver.disconnect()
   }
 
   activeIndexValueChanged(index, previousIndex) {
@@ -39,10 +49,17 @@ export default class extends ApplicationController {
 
   headlessPortalOutletConnected(controller) {
     controller.sync(this)
+    this.portaledDisabledObserver = this.#disabledObserver()
+    this.portaledDisabledObserver.observe(controller.element, {
+      attributes: true,
+      attributeFilter: ["disabled"],
+      subtree: true
+    })
   }
 
   headlessPortalOutletDisconnected(controller) {
     controller.desync(this)
+    this.portaledDisabledObserver.disconnect()
   }
 
   menuOpened() {
@@ -66,6 +83,9 @@ export default class extends ApplicationController {
     this.itemsTarget.removeAttribute("data-open")
     this.itemsTarget.setAttribute("data-closed", "")
     this.element.removeAttribute("data-open")
+    this.itemTargets.forEach(item => {
+      this.unfocusItem(item)
+    })
   }
 
   closeOnClickOutside(event) {
@@ -101,6 +121,7 @@ export default class extends ApplicationController {
 
   focus({ currentTarget }) {
     this.activeIndexValue = this.itemTargets.indexOf(currentTarget)
+    this.focusItem(currentTarget)
   }
 
   blur(event) {
@@ -158,5 +179,28 @@ export default class extends ApplicationController {
 
   selectItem() {
     this.itemTargets[this.activeIndexValue].click()
+  }
+
+  tokenMatched({ element, attributeName }) {
+    console.log("tokenMatched", element, attributeName)
+  }
+
+  tokenUnmatched({ element, attributeName }) {
+    console.log("tokenUnmatched", element, attributeName)
+  }
+
+  #disabledObserver() {
+    return new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "attributes" && mutation.attributeName === "disabled") {
+          const target = mutation.target
+          if (target.hasAttribute("disabled")) {
+            target.setAttribute("data-disabled", "")
+          } else {
+            target.removeAttribute("data-disabled")
+          }
+        }
+      })
+    })
   }
 }

@@ -12,6 +12,7 @@ module Headless
 
     def initialize(**options)
       @options = options
+      @options.deep_merge!({ data: { disabled: "" } }) if @options[:disabled]
       super(**options)
     end
 

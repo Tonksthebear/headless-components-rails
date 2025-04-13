@@ -53,7 +53,8 @@ export default class extends Controller {
   // Action management
   parseValueForToken({ content, element }) {
     const [action, rest] = content.split("->")
-    const [identifier, method] = rest.split("#")
+    const [identifier, methodDetails] = rest.split("#")
+    const [method, modifier] = methodDetails.split(":")
     const portaledActions = element.dataset.portaledActions || ""
 
     if (identifier === this.identifier || portaledActions.includes(content)) {
@@ -71,7 +72,7 @@ export default class extends Controller {
       }
     }
 
-    const updatedAction = `${action}->headless--portal#${methodName}`
+    const updatedAction = modifier ? `${action}->headless--portal#${methodName}:${modifier}` : `${action}->headless--portal#${methodName}`
     this.valueListObserver?.tokenListObserver?.pause(() => {
       element.dataset.portaledActions = portaledActions + " " + content
       element.dataset.action = element.dataset.action.replace(content, updatedAction)
