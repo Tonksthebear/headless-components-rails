@@ -30,7 +30,8 @@ module Headless
       renders_many :separators, Headless::Menu::SeparatorComponent
 
 
-      def initialize(static: false, unmount: true, anchor_to: nil, anchor_gap: nil, anchor_offset: nil, anchor_padding: nil, **options)
+      def initialize(items_id:, static: false, unmount: true, anchor_to: nil, anchor_gap: nil, anchor_offset: nil, anchor_padding: nil, **options)
+        @items_id = items_id
         @static = static
         @unmount = unmount
         @anchor_to = anchor_to
@@ -43,13 +44,13 @@ module Headless
       def before_render
         merge_classes!(yass(headless: { menu: { items: :classes } }), extra: "!hidden")
         merge_options!({
-          id: "portal",
           tabindex: "-1",
           role: "menu",
           data: {
             controller: "headless--portal",
             headless__menu_target: "items",
             headless__transition_target: "child",
+            headless_portal_id: @items_id,
             anchor_to: anchor_to,
             anchor_gap: anchor_gap,
             anchor_offset: anchor_offset,
@@ -67,9 +68,7 @@ module Headless
       end
 
       def call
-        tag.div(**options) do
-          content
-        end
+        content_tag(:div, content, **@options)
       end
     end
   end
