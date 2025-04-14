@@ -1,0 +1,8 @@
+<%= render Headless::ButtonComponent.new.with_content("Open Dialog") %>
+
+<%= render Headless::DialogComponent.new do |dialog| %>
+  <%= dialog.panel do %>
+    <%= dialog.title(label: "Dialog Title") %>
+    <%= dialog.description(label: "Dialog Description") %>
+  <% end %>
+<% end %>

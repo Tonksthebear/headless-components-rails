@@ -1,6 +1,5 @@
 import ApplicationController from "controllers/headless/application_controller"
 import { floatingControllerHelpers } from "headless/floating_controller_helpers"
-import { TokenListObserver } from "@hotwired/stimulus"
 
 export default class extends ApplicationController {
   static targets = ["button", "items", "item", "example"]
@@ -179,14 +178,6 @@ export default class extends ApplicationController {
 
   selectItem() {
     this.itemTargets[this.activeIndexValue].click()
-  }
-
-  tokenMatched({ element, attributeName }) {
-    console.log("tokenMatched", element, attributeName)
-  }
-
-  tokenUnmatched({ element, attributeName }) {
-    console.log("tokenUnmatched", element, attributeName)
   }
 
   #disabledObserver() {

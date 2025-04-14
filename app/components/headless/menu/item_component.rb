@@ -29,7 +29,7 @@ module Headless
       end
 
       def call
-        tag.send(type, **options) do
+        tag.public_send(type, **options) do
           content
         end
       end
