@@ -11,6 +11,7 @@ export default class extends ApplicationController {
   }
 
   connect() {
+    window.headlessActiveDialogStack ||= []
   }
 
   disconnect() {
@@ -32,6 +33,7 @@ export default class extends ApplicationController {
     this.panelTarget.setAttribute("data-open", "")
     this.hasTitleTarget && this.titleTarget.setAttribute("data-open", "")
     this.autofocusValue && this.panelTarget.focus()
+    this.#addToStack()
     lockScroll()
   }
 
@@ -41,6 +43,7 @@ export default class extends ApplicationController {
     this.hasBackdropTarget && this.backdropTarget.removeAttribute("data-open")
     this.panelTarget.removeAttribute("data-open")
     this.hasTitleTarget && this.titleTarget.removeAttribute("data-open")
+    this.#removeFromStack()
     unlockScroll()
   }
 
@@ -53,7 +56,7 @@ export default class extends ApplicationController {
   }
 
   documentClicked({ target }) {
-    if (this.element.hasAttribute("data-open")) {
+    if (this.#currentDialog()) {
       if (target != this.panelTarget && !this.panelTarget.contains(target)) {
         this.dispatch("leave")
       }
@@ -65,7 +68,7 @@ export default class extends ApplicationController {
   }
 
   focusNext() {
-    if (!this.element.hasAttribute("data-open")) return
+    if (!this.#currentDialog()) return
     const focusableElements = getAllFocusableElements(this.dialogTarget)
     const currentIndex = focusableElements.indexOf(document.activeElement)
     const nextIndex = (currentIndex + 1)
@@ -77,7 +80,7 @@ export default class extends ApplicationController {
   }
 
   focusPrevious() {
-    if (!this.element.hasAttribute("data-open")) return
+    if (!this.#currentDialog()) return
     const focusableElements = getAllFocusableElements(this.dialogTarget)
     const currentIndex = focusableElements.indexOf(document.activeElement)
     const previousIndex = (currentIndex - 1)
@@ -86,5 +89,17 @@ export default class extends ApplicationController {
     } else {
       focusableElements[focusableElements.length - 1].focus()
     }
+  }
+
+  #addToStack() {
+    window.headlessActiveDialogStack.push(this)
+  }
+
+  #removeFromStack() {
+    window.headlessActiveDialogStack = window.headlessActiveDialogStack.filter(dialog => dialog != this)
+  }
+
+  #currentDialog() {
+    return window.headlessActiveDialogStack[window.headlessActiveDialogStack.length - 1] == this
   }
 }

@@ -15,16 +15,16 @@ module Headless
             hidden: true
           },
           data: {
+            headless__dialog_target: "backdrop",
+            headless__transition_target: "child",
             action: "click->headless--dialog#close"
           }
         })
       end
 
       def call
-        content_tag.public_send(@as, content, **@options)
+        content_tag(@as, content, **@options)
       end
     end
   end
 end
-
- 

@@ -2,8 +2,16 @@ module Headless
   class DialogComponent < ApplicationComponent
     renders_one :panel, Headless::Dialog::PanelComponent
     renders_one :backdrop, Headless::Dialog::BackdropComponent
-    renders_one :title, Headless::Dialog::TitleComponent
+    renders_one :title, ->(**title_options) do
+      title_options[:id] = "#{@id}-title"
+
+      # Set parent dialog labelledby to title id only if a title is provided
+      options[:aria][:labelledby] = title_options[:id]
+      Headless::Dialog::TitleComponent.new(**title_options)
+    end
+
     renders_one :description, Headless::DescriptionComponent
+    renders_many :back_buttons, Headless::Dialog::BackButtonComponent
 
     def initialize(id: "dialog-#{object_id}", open: false, as: :div, role: :dialog, autofocus: false, **options)
       @id = id
@@ -57,7 +65,6 @@ module Headless
             keydown.shift+tab@document->headless--dialog#focusPrevious:prevent
           "
         }
-
       }
     end
 
