@@ -1,12 +1,8 @@
 module Headless
   module Dialog
     class BackdropComponent < ApplicationComponent
-      DEFAULT_TAG = :div
-
-      attr_reader :tag
-
-      def initialize(tag: DEFAULT_TAG, **options)
-        @tag = tag
+      def initialize(as: :div, **options)
+        @as = as
         super(**options)
       end
 
@@ -25,9 +21,7 @@ module Headless
       end
 
       def call
-        tag.public_send(@tag, **@options) do
-          content
-        end
+        content_tag.public_send(@as, content, **@options)
       end
     end
   end

@@ -1,16 +1,12 @@
 module Headless
   class DescriptionComponent < ApplicationComponent
-    attr_reader :tag, :id
-
-    def initialize(tag: :p, id: object.id, **options)
-      @tag = tag
-      @id = id
+    def initialize(as: :p, **options)
+      @as = as
       super(**options)
     end
 
     def before_render
       merge_options!({
-        id: @id,
         data: {
           headless__description_target: "description",
         }
@@ -18,7 +14,7 @@ module Headless
     end
 
     def call
-      content_tag(tag, content, **@options)
+      content_tag(as, content, **options)
     end
   end
 end

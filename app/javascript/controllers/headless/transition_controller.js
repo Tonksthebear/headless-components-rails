@@ -25,6 +25,7 @@ export default class extends ApplicationController {
     this.cleanup = new Set()
     this.childTransitions = new Set()
     this.activeTransitions = new Map() // Use a Map: element -> { id, controller }
+    this.elementsPendingHide = new Set() // Track elements waiting for children to finish
     this.startAnimationValue && this.enter()
   }
 
@@ -39,6 +40,7 @@ export default class extends ApplicationController {
   disconnect() {
     this.cleanup.forEach(cleanup => cleanup())
     this.cleanup.clear()
+    this.elementsPendingHide.clear()
   }
 
   toggle() {
@@ -302,7 +304,14 @@ export default class extends ApplicationController {
 
         // Handle hide after transition
         if (direction === 'leave' && element.hasAttribute('data-hide-after-transition')) {
-          element.classList.add('!hidden')
+          // Only hide if no descendant childTargets are still actively transitioning
+          if (this.#hasActiveDescendantTransitions(element)) {
+            // Descendants are still active, mark for later check
+            this.elementsPendingHide.add(element);
+          } else {
+            // No active descendants, hide now
+            element.classList.add('!hidden')
+          }
         }
       })()
 
@@ -351,7 +360,24 @@ export default class extends ApplicationController {
         this.inFlightValue = false
       }
       this.cleanup.delete(cleanup) // Remove Turbo listener
+
+      // Check if any elements waiting to hide can now do so
+      this.#checkPendingHides()
     }
+  }
+
+  // New helper method
+  #hasActiveDescendantTransitions(element) {
+    for (const [activeElement] of this.activeTransitions.entries()) {
+      // Check if the actively transitioning element is a descendant of the element
+      // wanting to hide, AND is not the element itself.
+      if (element !== activeElement && element.contains(activeElement)) {
+        // Found an active descendant, cannot hide yet.
+        return true;
+      }
+    }
+    // No active descendants found transitioning.
+    return false;
   }
 
   // State flag management
@@ -369,5 +395,19 @@ export default class extends ApplicationController {
         requestAnimationFrame(resolve)
       })
     })
+  }
+
+  // New method to check and hide elements waiting for descendants
+  #checkPendingHides() {
+    // Iterate over a copy because the set might be modified during iteration
+    for (const element of new Set(this.elementsPendingHide)) {
+      // Check if descendants are *still* active
+      if (!this.#hasActiveDescendantTransitions(element)) {
+        // Descendants are now finished, hide the element
+        element.classList.add('!hidden')
+        // Remove from the pending set
+        this.elementsPendingHide.delete(element)
+      }
+    }
   }
 }

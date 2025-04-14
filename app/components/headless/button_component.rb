@@ -13,28 +13,18 @@ module Headless
       super(**options)
     end
 
-    def merged_options
-      @options.deep_merge!({
+    def before_render
+      merge_classes!(yass(headless: { button: [ @color, @style ] }))
+
+      merge_options!({
         onmouseover: "this.setAttribute('data-hover', '')",
         onmouseout: "this.removeAttribute('data-hover')"
       })
-
-      @options
-    end
-
-    def classes
-      merge_classes!(yass(headless: { button: [ @color, @style ] }))
-    end
-
-    def render_icon
-      if icon.present?
-        icon.to_s
-      end
     end
 
     def call
-      tag.button(**merged_options) do
-        render(TouchTargetComponent.new) + content + render_icon
+      tag.button(**@options) do
+        render(TouchTargetComponent.new) + content
       end
     end
 

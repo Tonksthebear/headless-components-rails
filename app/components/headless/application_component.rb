@@ -4,7 +4,7 @@ module Headless
   class ApplicationComponent < ViewComponent::Base
     include Classy::Yaml::ComponentHelpers
 
-    attr_reader :options
+    attr_reader :options, :as
 
     def self.jsx_mapping(file: nil, component: nil)
       @jsx_mapping ||= { view_component: self.name, file: file, component: component }

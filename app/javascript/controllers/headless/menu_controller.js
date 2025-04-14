@@ -16,7 +16,7 @@ export default class extends ApplicationController {
   }
 
   connect() {
-    this.portalValue = this.portalValue || this.hasAnchor()
+    this.portalValue = this.portalValue || this.hasAnchor(this.itemsTarget)
     this.searchQuery = ""
     this.searchTimeout = null
     this.disabledObserver = this.#disabledObserver()

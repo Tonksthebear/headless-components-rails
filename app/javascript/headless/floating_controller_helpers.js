@@ -18,7 +18,7 @@ export const floatingControllerHelpers = {
     }
   },
 
-  hasAnchor() {
+  hasAnchor(element) {
     return (this.anchorToValue + this.anchorGapValue + this.anchorOffsetValue + this.anchorPaddingValue) !== ''
   },
 
