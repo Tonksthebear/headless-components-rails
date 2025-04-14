@@ -3,14 +3,20 @@ module Headless
     renders_one :panel, Headless::Dialog::PanelComponent
     renders_one :backdrop, Headless::Dialog::BackdropComponent
     renders_one :title, ->(**title_options) do
-      title_options[:id] = "#{@id}-title"
+      title_options[:id] ||= "#{@id}-title"
 
       # Set parent dialog labelledby to title id only if a title is provided
       options[:aria][:labelledby] = title_options[:id]
       Headless::Dialog::TitleComponent.new(**title_options)
     end
 
-    renders_one :description, Headless::DescriptionComponent
+    renders_one :description, ->(**description_options) do
+      description_options[:id] ||= "#{@id}-description"
+
+      # Set parent dialog describedby to title id only if a title is provided
+      options[:aria][:describedby] = token_list(options[:aria][:describedby], description_options[:id])
+      Headless::DescriptionComponent.new(**description_options)
+    end
     renders_many :back_buttons, Headless::Dialog::BackButtonComponent
 
     def initialize(id: "dialog-#{object_id}", open: false, as: :div, role: :dialog, autofocus: false, **options)
