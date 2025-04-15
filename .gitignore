@@ -10,7 +10,7 @@
 /headlessui/
 /test/dummy/catalyst-ui-kit/
 /test/dummy/config/headless.yml
-/test/dummy/app/assets/builds
+/test/dummy/app/assets/builds/
 /test/dummy/tmp/
 /node_modules/
 **.DS_STORE

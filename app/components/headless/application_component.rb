@@ -33,6 +33,8 @@ module Headless
           new_value
         end
       end
+
+      @options[:data][:autofocus] = "" if @options[:autofocus]
     end
   end
 end

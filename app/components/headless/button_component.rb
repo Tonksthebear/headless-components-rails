@@ -18,21 +18,32 @@ module Headless
 
       merge_options!({
         onmouseover: "this.setAttribute('data-hover', '')",
-        onmouseout: "this.removeAttribute('data-hover')"
+        onmouseout: "this.removeAttribute('data-hover'); this.removeAttribute('data-active')",
+        onmousedown: "this.setAttribute('data-active', '')",
+        onmouseup: "this.removeAttribute('data-active')"
       })
     end
 
     def call
-      tag.button(**@options) do
-        render(TouchTargetComponent.new) + content
+      tag.button(**options) do
+        TouchTargetComponent.new
+        content
       end
     end
 
     class TouchTargetComponent < ApplicationComponent
       jsx_mapping file: "button", component: "TouchTarget"
 
+      def render?
+        classes.present?
+      end
+
+      def classes
+        yass(skip_base: true, headless: { button: :touchtarget })
+      end
+
       def call
-        tag.span(class: yass(skip_base: true, headless: { button: :touchtarget }), aria: { hidden: true })
+        tag.span(class: classes, aria: { hidden: true })
       end
     end
   end
