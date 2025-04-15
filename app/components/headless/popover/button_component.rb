@@ -1,5 +1,5 @@
 module Headless
-  module Menu
+  module Popover
     class ButtonComponent < Headless::ButtonComponent
       def initialize(**options)
         super(**options)
@@ -8,14 +8,10 @@ module Headless
       def before_render
         merge_options!({
           data: {
-            headless__menu_target: "button",
+            headless__popover_target: "button",
             action: "headless--transition#toggle"
-          },
-          aria: {
-            expanded: "false",
-            haspopup: "menu"
-          }
-        })
+            }
+          })
         super
       end
     end

@@ -55,7 +55,7 @@ module Headless
             anchor_gap: anchor_gap,
             anchor_offset: anchor_offset,
             anchor_padding: anchor_padding,
-            hide_after_transition: true,
+            hide_after_transition: "",
             action: "
               keydown->headless--menu#focusMatchedItem
               keydown.down->headless--menu#focusNextItem:prevent

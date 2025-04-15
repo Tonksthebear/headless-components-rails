@@ -41,7 +41,7 @@ module Headless
           headless_portal_id: @id,
           headless__dialog_target: "dialog",
           headless__transition_target: "child",
-          hide_after_transition: true
+          hide_after_transition: ""
         }
       })
 

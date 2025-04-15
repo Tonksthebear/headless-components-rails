@@ -18,7 +18,7 @@ module Headless
           data: {
             headless__disclosure_target: "panel",
             headless__transition_target: "child",
-            hide_after_transition: true
+            hide_after_transition: ""
           }
         })
         merge_classes!("!hidden") unless @default_open
