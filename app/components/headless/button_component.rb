@@ -20,7 +20,9 @@ module Headless
         onmouseover: "this.setAttribute('data-hover', '')",
         onmouseout: "this.removeAttribute('data-hover'); this.removeAttribute('data-active')",
         onmousedown: "this.setAttribute('data-active', '')",
-        onmouseup: "this.removeAttribute('data-active')"
+        onmouseup: "this.removeAttribute('data-active')",
+        onfocus: "this.setAttribute('data-focus', '')",
+        onblur: "this.removeAttribute('data-focus')"
       })
     end
 

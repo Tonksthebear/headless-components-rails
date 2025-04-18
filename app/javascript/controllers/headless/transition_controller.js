@@ -1,4 +1,5 @@
 import ApplicationController from "controllers/headless/application_controller"
+import { nextFrame } from "headless/animation_helpers"
 
 // Match React's transition states
 const TransitionState = {
@@ -119,7 +120,7 @@ export default class extends ApplicationController {
     // Start child transitions whenever they become visible
     const childTransitions = this.childTargets.map(async child => {
       // Optional: Wait for parent to start transitioning
-      await this.#nextFrame()
+      await nextFrame()
       return this.#transition(direction, child)
     })
 
@@ -190,13 +191,6 @@ export default class extends ApplicationController {
     // Return a promise that resolves when EITHER the abort signal fires
     // OR all animations have settled.
     return Promise.race([onAbort, animationsSettled]);
-  }
-
-  // Enhanced frame handling - Simplified to one frame
-  #nextFrames() {
-    return new Promise(resolve => {
-      requestAnimationFrame(resolve)
-    })
   }
 
   #dispatchToAll(event, detail = {}) {
@@ -271,7 +265,7 @@ export default class extends ApplicationController {
         // Do NOT check abortController.signal here, prepare doesn't abort anymore
 
         // 2. Wait for the next frame - crucial delay
-        await this.#nextFrames()
+        await nextFrame()
         // Check if aborted by NAVIGATIION before proceeding
         if (abortController.signal.aborted) return
 

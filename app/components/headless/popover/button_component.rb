@@ -9,7 +9,11 @@ module Headless
         merge_options!({
           data: {
             headless__popover_target: "button",
-            action: "headless--transition#toggle"
+            action: "
+              headless--transition#toggle
+              keydown.tab->headless--popover#focusNext:prevent
+              keydown.shift+tab->headless--popover#focusPrevious:prevent
+            "
             }
           })
         super

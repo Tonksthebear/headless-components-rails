@@ -8,14 +8,19 @@ module Headless
       end
 
       def before_render
-        merge_options!({ 
-          id: @id, 
-          data: { 
+        merge_options!({
+          id: @id,
+          tabindex: "-1",
+          data: {
             controller: "headless--portal",
-            headless__popover_target: "panel" ,
+            headless__popover_target: "panel",
             headless__transition_target: "child",
             portal_id: @portal_id,
-            hide_after_transition: ""
+            hide_after_transition: "",
+            action: "
+              keydown.tab->headless--popover#focusNext:prevent
+              keydown.shift+tab->headless--popover#focusPrevious:prevent
+            "
           }
         })
         merge_classes!("!hidden")
