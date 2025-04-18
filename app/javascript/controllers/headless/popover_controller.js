@@ -38,6 +38,7 @@ export default class extends ApplicationController {
   popoverOpened() {
     this.dispatch("popoverOpened")
     this.element.setAttribute("data-open", "")
+    this.hasBackdropTarget && this.backdropTarget.setAttribute("data-open", "")
     this.buttonTarget.setAttribute("aria-expanded", "true")
     this.buttonTarget.setAttribute("data-open", "")
     this.panelTarget.setAttribute("data-open", "")
@@ -48,6 +49,7 @@ export default class extends ApplicationController {
   popoverClosed() {
     this.dispatch("popoverClosed")
     this.element.removeAttribute("data-open")
+    this.hasBackdropTarget && this.backdropTarget.removeAttribute("data-open")
     this.buttonTarget.setAttribute("aria-expanded", "false")
     this.buttonTarget.removeAttribute("data-open")
     this.panelTarget.removeAttribute("data-open")

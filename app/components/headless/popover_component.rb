@@ -5,6 +5,8 @@ module Headless
       Headless::Popover::ButtonComponent.new(**button_options)
     end
 
+    renders_one :backdrop, Headless::Popover::BackdropComponent
+
     renders_one :panel, ->(**panel_options) do
       panel_options[:id] ||= options[:id] + "-panel"
       panel_options[:portal_id] ||= options[:id] + "-portal"

@@ -9,6 +9,8 @@
             <%= popover.with_button(class: "block text-sm/6 font-semibold text-white/50 data-[active]:text-white data-[hover]:text-white data-[focus]:outline-1 data-[focus]:outline-white") do %>
               Solutions
             <% end %>
+
+            <%= popover.with_backdrop(class: "fixed inset-0 bg-black/30 duration-300 ease-out data-[closed]:opacity-0") %>
             <%= popover.with_panel(anchor: "bottom", class: "divide-y divide-white/5 rounded-xl bg-white/5 text-sm/6 transition duration-200 ease-in-out [--anchor-gap:calc(var(--spacing)*5)] data-[closed]:-translate-y-1 data-[closed]:opacity-0") do %>
               <div class="p-3">
                 <a class="block rounded-lg py-2 px-3 transition hover:bg-white/5 focus:bg-white/5" href="#">
