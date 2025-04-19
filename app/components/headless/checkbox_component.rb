@@ -4,7 +4,8 @@ module Headless
   class CheckboxComponent < ApplicationComponent
     jsx_mapping file: "checkbox", component: "Checkbox"
 
-    def initialize(disabled: false, hover: false, focus: false, active: false, autofocus: false)
+    def initialize(**options)
+      super(**options)
     end
   end
 end
