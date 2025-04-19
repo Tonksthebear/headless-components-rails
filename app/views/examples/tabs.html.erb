@@ -1,0 +1,162 @@
+<h1>Tabs Example</h1>
+
+<div class="example">
+  <h2>Basic Tabs</h2>
+
+  <%= headless_tab_group do %>
+    <%= headless_tab_list do %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 1
+      <% end %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 2
+      <% end %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 3
+      <% end %>
+    <% end %>
+
+    <%= headless_tab_panels do %>
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 1</h3>
+          <p>This is the content for panel 1.</p>
+        </div>
+      <% end %>
+
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 2</h3>
+          <p>This is the content for panel 2.</p>
+        </div>
+      <% end %>
+
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 3</h3>
+          <p>This is the content for panel 3.</p>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="example mt-8">
+  <h2>Vertical Tabs</h2>
+
+  <%= headless_tab_group(vertical: true) do %>
+    <div class="flex">
+      <%= headless_tab_list(class: "border-r") do %>
+        <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+          Tab 1
+        <% end %>
+        <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+          Tab 2
+        <% end %>
+        <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+          Tab 3
+        <% end %>
+      <% end %>
+
+      <%= headless_tab_panels(class: "flex-1") do %>
+        <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+          <div class="p-4">
+            <h3>Panel 1</h3>
+            <p>This is the content for panel 1.</p>
+          </div>
+        <% end %>
+
+        <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+          <div class="p-4">
+            <h3>Panel 2</h3>
+            <p>This is the content for panel 2.</p>
+          </div>
+        <% end %>
+
+        <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+          <div class="p-4">
+            <h3>Panel 3</h3>
+            <p>This is the content for panel 3.</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<div class="example mt-8">
+  <h2>Manual Tabs</h2>
+
+  <%= headless_tab_group(manual: true) do %>
+    <%= headless_tab_list do %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 1
+      <% end %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 2
+      <% end %>
+      <%= headless_tab(data: { headless__tab_target: "tab" }) do %>
+        Tab 3
+      <% end %>
+    <% end %>
+
+    <%= headless_tab_panels do %>
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 1</h3>
+          <p>This is the content for panel 1.</p>
+        </div>
+      <% end %>
+
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 2</h3>
+          <p>This is the content for panel 2.</p>
+        </div>
+      <% end %>
+
+      <%= headless_tab_panel(data: { headless__tab_target: "panel" }) do %>
+        <div class="p-4">
+          <h3>Panel 3</h3>
+          <p>This is the content for panel 3.</p>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<style>
+  .example {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  [data-controller="headless--tab"] [role="tab"] {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    cursor: pointer;
+  }
+  
+  [data-controller="headless--tab"] [role="tab"][aria-selected="true"] {
+    background-color: #fff;
+    border-bottom-color: #fff;
+  }
+  
+  [data-controller="headless--tab"] [role="tablist"] {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  [data-controller="headless--tab"][data-headless--tab-vertical-value="true"] [role="tablist"] {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 1px solid #e2e8f0;
+  }
+  
+  [data-controller="headless--tab"][data-headless--tab-vertical-value="true"] [role="tab"][aria-selected="true"] {
+    border-right-color: #fff;
+  }
+</style>

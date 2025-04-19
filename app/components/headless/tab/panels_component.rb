@@ -6,6 +6,15 @@ module Headless
         super(**options)
       end
 
+      def before_render
+        merge_options!({
+          role: "tabpanels",
+          data: {
+            headless__tab_target: "panels"
+          }
+        })
+      end
+
       def call
         content_tag(@as, content, **@options)
       end
