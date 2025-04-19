@@ -1,13 +1,13 @@
 module Headless
   class DisclosureComponent < ApplicationComponent
     renders_one :button, ->(**button_options) do
-      button_options[:id] ||= "#{options[:id]}-button"
+      button_options[:id] ||= "#{@options[:id]}-button"
       button_options[:default_open] = @default_open
       Headless::Disclosure::ButtonComponent.new(**button_options)
     end
 
     renders_one :panel, ->(**panel_options) do
-      panel_options[:id] ||= "#{options[:id]}-panel"
+      panel_options[:id] ||= "#{@options[:id]}-panel"
       panel_options[:default_open] = @default_open
       Headless::Disclosure::PanelComponent.new(id: @panel_id, **panel_options)
     end
@@ -35,7 +35,7 @@ module Headless
     end
 
     def call
-      content_tag(@as, content, **options)
+      content_tag(@as, content, **@options)
     end
   end
 end

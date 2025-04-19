@@ -8,13 +8,13 @@ module Headless
     def before_render
       merge_options!({
         data: {
-          headless__description_target: "description",
+          headless__description_target: "description"
         }
       })
     end
 
     def call
-      content_tag(as, content, **options)
+      content_tag(@as, content, **@options)
     end
   end
 end

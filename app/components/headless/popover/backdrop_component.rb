@@ -21,7 +21,7 @@ module Headless
       end
 
       def call
-        content_tag(@as, content, **options)
+        content_tag(@as, content, **@options)
       end
     end
   end

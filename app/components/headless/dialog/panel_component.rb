@@ -8,7 +8,7 @@ module Headless
 
       def before_render
         merge_options!({
-          id: options[:id],
+          id: @options[:id],
           tabindex: "-1",
           role: @role,
           data: {
@@ -19,7 +19,7 @@ module Headless
       end
 
       def call
-        content_tag(as, content, **options)
+        content_tag(@as, content, **@options)
       end
     end
   end

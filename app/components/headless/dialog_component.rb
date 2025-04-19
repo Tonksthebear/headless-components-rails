@@ -6,7 +6,7 @@ module Headless
       title_options[:id] ||= "#{@id}-title"
 
       # Set parent dialog labelledby to title id only if a title is provided
-      options[:aria][:labelledby] = title_options[:id]
+      @options[:aria][:labelledby] = title_options[:id]
       Headless::Dialog::TitleComponent.new(**title_options)
     end
 
@@ -14,7 +14,7 @@ module Headless
       description_options[:id] ||= "#{@id}-description"
 
       # Set parent dialog describedby to title id only if a title is provided
-      options[:aria][:describedby] = token_list(options[:aria][:describedby], description_options[:id])
+      @options[:aria][:describedby] = token_list(@options[:aria][:describedby], description_options[:id])
       Headless::DescriptionComponent.new(**description_options)
     end
     renders_many :back_buttons, Headless::Dialog::BackButtonComponent
@@ -31,7 +31,7 @@ module Headless
 
     def before_render
       merge_options!({
-        id: options[:id],
+        id: @options[:id],
         role: @role,
         aria: {
           modal: true
@@ -76,7 +76,7 @@ module Headless
 
     def call
       content_tag(:div, container_options) do
-        content_tag(as, content, **options)
+        content_tag(@as, content, **@options)
       end
     end
   end

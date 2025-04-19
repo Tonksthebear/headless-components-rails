@@ -27,7 +27,7 @@ module Headless
     end
 
     def call
-      tag.button(**options) do
+      tag.button(**@options) do
         TouchTargetComponent.new
         content
       end
