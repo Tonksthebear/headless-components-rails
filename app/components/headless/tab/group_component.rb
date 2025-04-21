@@ -3,29 +3,29 @@ module Headless
     class GroupComponent < ApplicationComponent
       renders_one :tab_list, ->(**list_options) do
         list_options[:selected_index] = @selected_index
-        list_options[:id] ||= "#{options[:id]}-tab-list"
+        list_options[:id] ||= "#{@options[:id]}-tab-list"
         Headless::Tab::ListComponent.new(**list_options)
       end
 
       renders_many :tabs, ->(**tab_options) do
         tab_options[:selected] = tabs.length == @selected_index
-        tab_options[:id] ||= "#{options[:id]}-tab-#{tabs.length}"
+        tab_options[:id] ||= "#{@options[:id]}-tab-#{tabs.length}"
         tab_options[:aria] ||= {}
-        tab_options[:aria][:controls] = "#{options[:id]}-panel-#{tabs.length}"
+        tab_options[:aria][:controls] = "#{@options[:id]}-panel-#{tabs.length}"
         Headless::TabComponent.new(**tab_options)
       end
 
       renders_one :panels, ->(**panels_options) do
         panels_options[:selected_index] = @selected_index
-        panels_options[:id] ||= "#{options[:id]}-panels"
+        panels_options[:id] ||= "#{@options[:id]}-panels"
         Headless::Tab::PanelsComponent.new(**panels_options)
       end
 
       renders_many :tab_panels, ->(**panel_options) do
         panel_options[:selected] = tab_panels.length == @selected_index
-        panel_options[:id] ||= "#{options[:id]}-panel-#{tab_panels.length}"
+        panel_options[:id] ||= "#{@options[:id]}-panel-#{tab_panels.length}"
         panel_options[:aria] ||= {}
-        panel_options[:aria][:labelledby] = tabs[tab_panels.length - 1].options[:id]
+        panel_options[:aria][:labelledby] = tabs[tab_panels.length - 1].id
         Headless::Tab::PanelComponent.new(**panel_options)
       end
 

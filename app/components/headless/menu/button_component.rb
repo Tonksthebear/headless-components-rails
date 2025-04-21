@@ -9,7 +9,9 @@ module Headless
         merge_options!({
           data: {
             headless__menu_target: "button",
-            action: "headless--transition#toggle"
+            action: "
+              click->headless--transition#toggle
+            "
           },
           aria: {
             expanded: "false",

@@ -44,21 +44,21 @@ export default class extends ApplicationController {
     this.elementsPendingHide.clear()
   }
 
-  toggle() {
+  async toggle() {
     this.transitionedValue = !this.transitionedValue
     this.#transitionAll(this.transitionedValue ? 'enter' : 'leave')
   }
 
-  enter() {
+  async enter() {
     if (this.transitionedValue === true) return
     this.transitionedValue = true
-    this.#transitionAll('enter')
+    await this.#transitionAll('enter')
   }
 
-  leave() {
+  async leave() {
     if (this.transitionedValue === false) return
     this.transitionedValue = false
-    this.#transitionAll('leave')
+    await this.#transitionAll('leave')
   }
 
   // Handle all transitions (parent and children)

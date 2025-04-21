@@ -1,5 +1,7 @@
 module Headless
   class TabComponent < ButtonComponent
+    attr_reader :id
+
     def initialize(as: :button, selected: false, **options)
       @as = as
       @selected = selected
