@@ -1,6 +1,9 @@
 module Headless
   class ComboboxComponent < ApplicationComponent
     # jsx_mapping file: "combobox", component: "Combobox" # Assuming this is for react-rails, may not be needed for Stimulus only
+    renders_one :filter, ->(&block) do
+      content_tag(:template, block.call, data: { headless__combobox_target: "filterScript" })
+    end
 
     renders_one :input, ->(**input_options) {
       input_options[:id] ||= @options[:id] + "-input"
@@ -20,7 +23,6 @@ module Headless
       option_options[:id] ||= @options[:id] + "-option-#{@nil_option_count += 1}"
       Headless::Combobox::OptionComponent.new(**option_options)
     }
-
 
     def initialize(as: :div, open: false, default_value: [], nullable: true, immediate: false, virtual: false, **options)
       @as = as

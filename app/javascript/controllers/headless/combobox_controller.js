@@ -1,11 +1,10 @@
 import ApplicationController from "controllers/headless/application_controller"
 import { floatingControllerHelpers } from "headless/floating_controller_helpers"
 import { observeElementSize } from "headless/element_size_helper"
-// import {
-//   debounce,
+import { ComboboxState } from "headless/combobox_state"
 
 export default class extends ApplicationController {
-  static targets = ["input", "button", "options", "option", "hiddenInput", "templateOption"]
+  static targets = ["input", "button", "options", "option", "hiddenInput", "templateOption", "filterScript"]
   static outlets = ["headless--portal", "headless--transition"]
   static values = {
     value: { type: Array, default: [] },
@@ -17,6 +16,7 @@ export default class extends ApplicationController {
     immediate: { type: Boolean, default: false },
     virtual: { type: Boolean, default: false },
     portal: { type: Boolean, default: false },
+    selectedIndex: { type: Number, default: -1 },
   }
 
   constructor(context) {
@@ -29,6 +29,7 @@ export default class extends ApplicationController {
   }
 
   connect() {
+    this.state = new ComboboxState(this)
     this.portalValue = this.portalValue || this.hasAnchor(this.optionsTarget)
     this.inputSizeObserver = observeElementSize(this.inputTarget, this.#inputSizeChanged.bind(this))
     this.buttonSizeObserver = observeElementSize(this.buttonTarget, this.#buttonSizeChanged.bind(this))
@@ -37,8 +38,12 @@ export default class extends ApplicationController {
     this.newlyDeselectedOption = null
     this.unmatchedOptions = []
     this.query = ""
+    this.options = this.optionTargets
+
+    this.#updateOptions()
     if (this.hasTemplateOptionTarget) {
       this.templateOption = this.templateOptionTarget.content.firstElementChild
+      this.#presentCreateOption()
     }
 
     if (this.openValue) {
@@ -106,73 +111,82 @@ export default class extends ApplicationController {
   }
 
   async filterOptions() {
-    var hasOneVisible = false
-    var exactMatch = false
-    this.unmatchedOptions = []
-    this.optionTargets.forEach(option => {
-      if (option.dataset.displayValue.toLowerCase() === this.query.toLowerCase() && option != this.createdOption) {
-        exactMatch = true
-      }
-      option.hidden = !option.dataset.displayValue.toLowerCase().includes(this.query.toLowerCase())
-      if (option.hidden) {
-        this.unmatchedOptions.push(option)
-        option.setAttribute("aria-hidden", "true")
-        option.classList.add("!hidden")
-      } else {
-        hasOneVisible = true
-        option.setAttribute("aria-hidden", "false")
-        option.classList.remove("!hidden")
-      }
-    })
-    if (exactMatch || this.query == "") {
-      this.#hideCreateOption()
-    } else {
-      this.#presentCreateOption()
-    }
-    if (hasOneVisible) {
-      if (!this.element.dataset.open) await this.headlessTransitionOutlet.enter()
-      this.optionsTarget.classList.remove("!hidden")
-      this.#setActiveOption(this.optionTargets[this.#nextActiveIndex(0)])
-    } else {
-      this.optionsTarget.classList.add("!hidden")
-    }
+    this.#updateOptions()
+    // this.optionTargets.forEach(this.filter.bind(this))
+    // if (this.exactMatch || this.query == "") {
+    //   this.#hideCreateOption()
+    // } else {
+    //   this.#presentCreateOption()
+    // }
+    // if (this.matchedOptions.length != 0) {
+    //   if (!this.element.dataset.open) await this.headlessTransitionOutlet.enter()
+    //   this.optionsTarget.classList.remove("!hidden")
+    //   this.#setActiveOption(this.optionTargets[this.#nextActiveIndex(0)])
+    // } else {
+    //   this.optionsTarget.classList.add("!hidden")
+    // }
   }
 
   inputFocused() {
     if (this.immediateValue) this.headlessTransitionOutlet.enter()
   }
 
-  focusNextOption() {
-    var currentIndex = this.optionTargets.indexOf(this.activeOption) + 1
+  selectedIndexValueChanged(newIndex, oldIndex) {
+    const direction = newIndex > oldIndex ? 1 : -1
 
-    if (!this.element.hasAttribute("data-open")) {
-      this.headlessTransitionOutlet.enter()
-      if (this.activeOption) currentIndex = this.optionTargets.indexOf(this.activeOption)
+    if (oldIndex == undefined) return
+    var option = null
+    const indexAdjustment = this.#createdOptionVisible() ? -1 : 0
+    if (this.#createdOptionVisible() && newIndex == 0) {
+      option = this.createdOption
+    } else {
+      option = this.options[this.displayOrder[newIndex + indexAdjustment]]
     }
 
-    this.#setActiveOption(this.optionTargets[this.#nextActiveIndex(currentIndex)])
+    if (option?.disabled) {
+      if (direction == 1) {
+        this.selectedIndexValue = newIndex++
+      } else {
+        this.selectedIndexValue = newIndex--
+      }
+    } else if (!option) {
+      if (direction == 1) {
+        this.selectedIndexValue = 0
+      } else {
+        this.selectedIndexValue = this.displayOrder.length - 1 - indexAdjustment
+      }
+    } else {
+      this.#setActiveOption(option)
+    }
+  }
+
+  focusNextOption() {
+    if (!this.element.hasAttribute("data-open")) {
+      this.headlessTransitionOutlet.enter()
+      if (this.activeOption) this.selectedIndexValue = this.#indexOfActiveOption()
+    } else {
+      this.selectedIndexValue = this.selectedIndexValue + 1
+    }
   }
 
   focusPreviousOption() {
-    var currentIndex = this.optionTargets.indexOf(this.activeOption) - 1
-
     if (!this.element.hasAttribute("data-open")) {
       this.headlessTransitionOutlet.enter()
-      if (this.activeOption) currentIndex = this.optionTargets.indexOf(this.activeOption)
+      if (this.activeOption) this.selectedIndexValue = this.#indexOfActiveOption()
+    } else {
+      this.selectedIndexValue = this.selectedIndexValue - 1
     }
+  }
 
-    this.#setActiveOption(this.optionTargets[this.#previousActiveIndex(currentIndex)])
+  #indexOfActiveOption() {
+    return this.displayOrder.indexOf(this.options.indexOf(this.activeOption))
   }
 
   async clearInput() {
     this.inputTarget.value = this.activeOption.dataset.displayValue
     if (!this.multipleValue) await this.headlessTransitionOutlet.leave()
-    this.unmatchedOptions.forEach(option => {
-      option.hidden = false
-      option.setAttribute("aria-hidden", "false")
-      option.classList.remove("!hidden")
-    })
-    if (!this.#previouslySelected(this.createdOption)) this.#hideCreateOption()
+    this.query = ""
+    this.filterOptions()
   }
 
   focusOption({ currentTarget }) {
@@ -181,6 +195,11 @@ export default class extends ApplicationController {
 
   unfocusOption() {
     this.#unfocusActiveOption()
+  }
+
+  #createdOptionVisible() {
+    if (!this.createdOption) return false
+    return !this.createdOption.classList.contains("!hidden")
   }
 
   #presentCreateOption() {
@@ -203,6 +222,11 @@ export default class extends ApplicationController {
     this.createdOption.classList.add("!hidden")
   }
 
+  #showCreateOption() {
+    if (!this.createdOption) return
+    this.createdOption.classList.remove("!hidden")
+  }
+
   #inputSizeChanged(newSize) {
     this.optionsTarget.style.setProperty("--input-width", `${newSize.width}px`)
   }
@@ -218,12 +242,7 @@ export default class extends ApplicationController {
       if (!this.#previouslySelected(option)) this.#clearOptionsByValue()
       this.#addToOptionsByValue(option)
     }
-    this.#updateOptions()
-  }
-
-  #removeValue(option) {
-    this.#removeFromOptionsByValue(option)
-    this.#updateOptions()
+    this.#updateOption()
   }
 
   #syncInputValue() {
@@ -250,9 +269,8 @@ export default class extends ApplicationController {
     this.#syncInputValue()
   }
 
-  async #updateOptions() {
+  async #updateOption() {
     if (!this.multipleValue) await this.headlessTransitionOutlet.leave()
-    this.clearInput()
     if (this.newlySelectedOption != this.createdOption) this.#hideCreateOption()
     if (this.newlySelectedOption) {
       this.newlySelectedOption.setAttribute("aria-selected", "true")
@@ -268,33 +286,9 @@ export default class extends ApplicationController {
     this.optionsByValue.forEach(this.#removeFromOptionsByValue.bind(this))
   }
 
-  #nextActiveIndex(index) {
-    if (index < this.optionTargets.length) {
-      if (!this.optionTargets[index].disabled && !this.optionTargets[index].classList.contains("!hidden")) {
-        return index
-      } else {
-        return this.#nextActiveIndex(index + 1)
-      }
-    } else {
-      return this.#nextActiveIndex(0)
-    }
-  }
-
   #previouslySelected(option) {
     if (!option) return false
     return this.optionsByValue.has(option.dataset.value)
-  }
-
-  #previousActiveIndex(index) {
-    if (index >= 0) {
-      if (!this.optionTargets[index].disabled && !this.optionTargets[index].classList.contains("!hidden")) {
-        return index
-      } else {
-        return this.#previousActiveIndex(index - 1)
-      }
-    } else {
-      return this.#previousActiveIndex(this.optionTargets.length - 1)
-    }
   }
 
   #setActiveOption(option) {
@@ -309,5 +303,59 @@ export default class extends ApplicationController {
     this.activeOption.removeAttribute("data-focus")
     this.activeOption.removeAttribute("data-active")
     this.activeOption = null
+  }
+
+  #processFilter() {
+    try {
+      const func = new Function(this.filterScriptTarget.content.textContent)
+      func.call(this)
+    } catch (error) {
+      console.error('Error executing custom method script:', error)
+    }
+  }
+
+  #getOptionsToHide(filteredOptionsList, key = null) {
+    const userSet = key ? new Set(filteredOptionsList.map(item => item[key])) : new Set(filteredOptionsList)
+    return this.options
+      .map((item, index) => ({ value: key ? item[key] : item, index }))
+      .filter(({ value }) => !userSet.has(value))
+      .map(({ index }) => index)
+  }
+
+  #getOptionDisplayOrder(filteredOptionsList, key = null) {
+    const userMap = new Map(filteredOptionsList.map((item, index) => [key ? item[key] : item, index]))
+    return this.options
+      .map((item, index) => ({ value: key ? item[key] : item, index }))
+      .filter(({ value }) => userMap.has(value))
+      .sort((a, b) => userMap.get(a.value) - userMap.get(b.value))
+      .map(({ index }) => index)
+  }
+
+  #updateOptions() {
+    this.#processFilter()
+    const indicesToHide = this.#getOptionsToHide([this.createdOption, ...this.filteredOptions])
+    this.displayOrder = this.#getOptionDisplayOrder([this.createdOption, ...this.filteredOptions])
+
+    if (this.query == "") {
+      this.#hideCreateOption()
+    } else {
+      this.#showCreateOption()
+    }
+
+    for (let i = 0; i < this.options.length; i++) {
+      const isHidden = indicesToHide.includes(i)
+      if (isHidden) {
+        this.options[i].classList.add('!hidden')
+        this.options[i].setAttribute("aria-hidden", "true")
+      } else {
+        this.options[i].classList.remove('!hidden')
+        this.options[i].setAttribute("aria-hidden", "false")
+        if (this.options[i].dataset.displayValue.toLowerCase() == this.query.toLowerCase()) {
+          this.#hideCreateOption()
+        }
+      }
+      this.options[i].style.order = this.displayOrder.indexOf(i) >= 0 ? this.displayOrder.indexOf(i) : 9999
+    }
+    this.selectedIndexValue = this.#indexOfActiveOption()
   }
 }
