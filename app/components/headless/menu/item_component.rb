@@ -18,7 +18,7 @@ module Headless
           data: {
             headless__menu_target: "item",
             action: "
-              mouseover->headless--menu#focus
+              mouseenter->headless--menu#focus
               click->headless--menu#select
               mouseleave->headless--menu#blur
               focus->headless--menu#focus

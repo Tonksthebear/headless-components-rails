@@ -28,8 +28,8 @@ module Headless
             headless__combobox_target: "option",
             action: "
               click->headless--combobox#selectOption
-              mouseover->headless--combobox#focusOption
-              mouseout->headless--combobox#unfocusOption
+              mouseenter->headless--combobox#focusOption:self
+              mouseleave->headless--combobox#unfocusOption:self
             "
           }
         })

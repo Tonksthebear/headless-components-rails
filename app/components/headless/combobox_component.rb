@@ -60,14 +60,11 @@ module Headless
             keydown.enter->headless--combobox#selectActiveOption:prevent
             keydown.down->headless--combobox#focusNextOption:prevent
             keydown.up->headless--combobox#focusPreviousOption:prevent
-            keydown.home->headless--combobox#moveFocusFirst:prevent
-            keydown.end->headless--combobox#moveFocusLast:prevent
+            keydown.home->headless--combobox#focusFirstOption:prevent
+            keydown.page_up->headless--combobox#focusFirstOption:prevent
+            keydown.end->headless--combobox#focusLastOption:prevent
+            keydown.page_down->headless--combobox#focusLastOption:prevent
             keydown.esc->headless--combobox#clearInput:prevent
-            transition:beforeenter->headless--combobox#sendPortal
-            transition:afterenter->headless--combobox#comboboxOpened
-            transition:afterleave->headless--combobox#comboboxClosed
-            headless--combobox:leave->headless--transition#leave
-            transition:afterleave->headless--combobox#retrievePortal
           "
         }
       })

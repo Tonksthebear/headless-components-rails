@@ -16,7 +16,7 @@ module Headless
           data: {
             headless__combobox_target: "button",
             action: "
-              click->headless--transition#toggle
+              click->headless--combobox#toggle
             "
           }
         })

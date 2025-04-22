@@ -22,7 +22,7 @@ module Headless
           data: {
             headless__combobox_target: "input",
             action: "
-              input->headless--combobox#updateQuery
+              input->headless--combobox#filterOptions
               focus->headless--combobox#inputFocused
             "
           }
