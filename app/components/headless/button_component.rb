@@ -21,8 +21,8 @@ module Headless
         onmouseleave: "this.removeAttribute('data-hover'); this.removeAttribute('data-active')",
         onmousedown: "this.setAttribute('data-active', '')",
         onmouseup: "this.removeAttribute('data-active')",
-        onfocus: "this.setAttribute('data-focus', '')",
-        onblur: "this.removeAttribute('data-focus')"
+        onfocus: "Headless.elementFocus(this)",
+        onblur: "Headless.elementBlur(this)"
       })
     end
 
