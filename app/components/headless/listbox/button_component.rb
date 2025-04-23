@@ -1,20 +1,28 @@
 module Headless
   module Listbox
     class ButtonComponent < Headless::ButtonComponent
-      renders_one :icon, ->(icon_name, **icon_options) {
-        icon_options[:variant] ||= "micro"
+      attr_reader :disabled, :auto_focus
 
-        heroicon icon_name, **icon_options
-      }
-
-      def initialize(as: :button, **options)
-        @as = as
+      def initialize(keyboard_navigation_actions: [], **options)
+        @keyboard_navigation_actions = keyboard_navigation_actions
         super(**options)
       end
 
       def before_render
+        actions = []
+        actions << "click->headless--listbox#toggle"
+
         merge_options!({
-          role: "button"
+          role: "button",
+          aria: {
+            haspopup: "listbox",
+            expanded: "false",
+            controls: @options[:listbox_id]
+          },
+          data: {
+            headless__listbox_target: "button",
+            action: (actions + @keyboard_navigation_actions).join(" ")
+          }
         })
         super
       end

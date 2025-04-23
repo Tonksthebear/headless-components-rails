@@ -3,6 +3,9 @@
 module Headless
   class ApplicationComponent < ViewComponent::Base
     include Classy::Yaml::ComponentHelpers
+    renders_many :icons, ->(icon_name = nil, icon: icon_name, variant: "micro", **icon_options) do
+      heroicon icon, variant: variant, data: { slot: "icon" }, **icon_options
+    end
 
     attr_reader :as
 

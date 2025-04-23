@@ -1,5 +1,6 @@
 import ApplicationController from "controllers/headless/application_controller"
 import { floatingControllerHelpers } from "headless/floating_controller_helpers"
+import DisabledObserver from "headless/disabled_observer"
 
 export default class extends ApplicationController {
   static targets = ["button", "items", "item", "example"]
@@ -19,12 +20,11 @@ export default class extends ApplicationController {
     this.portalValue = this.portalValue || this.hasAnchor(this.itemsTarget)
     this.searchQuery = ""
     this.searchTimeout = null
-    this.disabledObserver = this.#disabledObserver()
-    this.disabledObserver.observe(this.element, {
-      attributes: true,
-      attributeFilter: ["disabled"],
-      subtree: true
+    this.disabledObserver = new DisabledObserver(this.element, {
+      elementDisabled: this.#elementDisabled,
+      elementEnabled: this.#elementEnabled
     })
+    this.disabledObserver.start()
 
     if (this.openAtStartValue) {
       this.headlessTransitionOutlet.enter()
@@ -34,7 +34,7 @@ export default class extends ApplicationController {
   }
 
   disconnect() {
-    this.disabledObserver.disconnect()
+    this.disabledObserver.stop()
   }
 
   activeIndexValueChanged(index, previousIndex) {
@@ -48,17 +48,16 @@ export default class extends ApplicationController {
 
   headlessPortalOutletConnected(controller) {
     controller.sync(this)
-    this.portaledDisabledObserver = this.#disabledObserver()
-    this.portaledDisabledObserver.observe(controller.element, {
-      attributes: true,
-      attributeFilter: ["disabled"],
-      subtree: true
+    this.portaledDisabledObserver = new DisabledObserver(controller.element, {
+      elementDisabled: this.#elementDisabled,
+      elementEnabled: this.#elementEnabled
     })
+    this.portaledDisabledObserver.start()
   }
 
   headlessPortalOutletDisconnected(controller) {
     controller.desync(this)
-    this.portaledDisabledObserver.disconnect()
+    this.portaledDisabledObserver.stop()
   }
 
   menuOpened() {
@@ -180,18 +179,11 @@ export default class extends ApplicationController {
     this.itemTargets[this.activeIndexValue].click()
   }
 
-  #disabledObserver() {
-    return new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "attributes" && mutation.attributeName === "disabled") {
-          const target = mutation.target
-          if (target.hasAttribute("disabled")) {
-            target.setAttribute("data-disabled", "")
-          } else {
-            target.removeAttribute("data-disabled")
-          }
-        }
-      })
-    })
+  #elementDisabled(target) {
+    target.setAttribute("data-disabled", "")
+  }
+
+  #elementEnabled(target) {
+    target.removeAttribute("data-disabled")
   }
 }

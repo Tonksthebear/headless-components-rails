@@ -1,6 +1,6 @@
 import ApplicationController from "controllers/headless/application_controller"
 import { floatingControllerHelpers } from "headless/floating_controller_helpers"
-import { observeElementSize } from "headless/element_size_helper"
+import ElementSizeObserver from "headless/element_size_observer"
 import ComboboxState from "headless/combobox_state"
 
 export default class extends ApplicationController {
@@ -34,8 +34,10 @@ export default class extends ApplicationController {
     this.portalValue = this.portalValue || this.hasAnchor(this.optionsTarget)
 
     // Setup observers
-    this.inputSizeObserver = observeElementSize(this.inputTarget, this.inputSizeChanged.bind(this))
-    this.buttonSizeObserver = observeElementSize(this.buttonTarget, this.buttonSizeChanged.bind(this))
+    this.elementSizeObserver = new ElementSizeObserver([this.inputTarget, this.buttonTarget], {
+      elementResized: this.#elementSizeChanged.bind(this)
+    })
+    this.elementSizeObserver.start()
 
     // Initialize state variables
     this.query = ""
@@ -58,8 +60,7 @@ export default class extends ApplicationController {
   }
 
   disconnect() {
-    this.inputSizeObserver.disconnect()
-    this.buttonSizeObserver.disconnect()
+    this.elementSizeObserver.stop()
   }
 
   open() {
@@ -165,15 +166,15 @@ export default class extends ApplicationController {
     this.state.unsetActiveOption(currentTarget)
   }
 
-  inputSizeChanged(newSize) {
-    this.optionsTarget.style.setProperty("--input-width", `${newSize.width}px`)
-  }
-
-  buttonSizeChanged(newSize) {
-    this.optionsTarget.style.setProperty("--button-width", `${newSize.width}px`)
-  }
-
   updateOptions() {
     this.state.updateOptions()
+  }
+
+  #elementSizeChanged(element, newSize) {
+    if (element === this.inputTarget) {
+      this.optionsTarget.style.setProperty("--input-width", `${newSize.width}px`)
+    } else if (element === this.buttonTarget) {
+      this.optionsTarget.style.setProperty("--button-width", `${newSize.width}px`)
+    }
   }
 }

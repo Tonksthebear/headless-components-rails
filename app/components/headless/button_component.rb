@@ -3,9 +3,6 @@
 module Headless
   class ButtonComponent < ApplicationComponent
     jsx_mapping file: "button", component: "Button"
-    renders_one :icon, ->(icon:, variant: "micro", **options) do
-      heroicon icon, variant: variant, data: { slot: "icon" }, **options
-    end
 
     def initialize(color: :light, style: :solid, **options)
       @color = color
