@@ -256,7 +256,7 @@ function fixScrollingPixel(element) {
 export function setupFloating({ reference, floating, config = {} }) {
   if (!reference || !floating) return () => { }
 
-  const [to, align] = config.placement.split(' ')
+  const [to, align] = config.placement?.split(' ') || [null, null]
 
   // Resolve configuration
   const resolvedConfig = {

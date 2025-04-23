@@ -1,0 +1,35 @@
+<div class="bg-black h-full w-full">
+  <div class="relative min-h-full antialiased">
+    <div class="relative bg-white/5">
+      <div class="absolute inset-[35%] block rounded-full bg-white/15 blur-2xl" aria-hidden="true" inert=""></div>
+      <div class="flex h-screen w-full justify-center pt-24 px-4">
+        <div class="w-full max-w-md">
+          <%= render Headless::Tab::GroupComponent.new do |tab_group| %>
+            <%= tab_group.with_tab_list(class: "flex gap-4") do %>
+              <%= tab_group.with_tab(class: "rounded-full py-1 px-3 text-sm/6 font-semibold text-white focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-solid data-[focus]:outline-1 data-[focus]:outline-white") do %>
+                Recent
+              <% end %>
+              <%= tab_group.with_tab(class: "rounded-full py-1 px-3 text-sm/6 font-semibold text-white focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-solid data-[focus]:outline-1 data-[focus]:outline-white") do %>
+                All
+              <% end %>
+              <%= tab_group.with_tab(class: "rounded-full py-1 px-3 text-sm/6 font-semibold text-white focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-solid data-[focus]:outline-1 data-[focus]:outline-white") do %>
+                Starred
+              <% end %>
+            <% end %>
+            <%= tab_group.with_panels(class: "mt-3") do %>
+              <%= tab_group.with_tab_panel(class: "rounded-xl bg-white/5 p-3") do %>
+                <p class="font-semibold text-white">Recent</p>
+              <% end %>
+              <%= tab_group.with_tab_panel(class: "rounded-xl bg-white/5 p-3") do %>
+                <p class="font-semibold text-white">All</p>
+              <% end %>
+              <%= tab_group.with_tab_panel(class: "rounded-xl bg-white/5 p-3") do %>
+                <p class="font-semibold text-white">Starred</p>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,43 +3,46 @@
 module Headless
   class ButtonComponent < ApplicationComponent
     jsx_mapping file: "button", component: "Button"
-    renders_one :icon, ->(icon:, variant: "micro", **options) do
-      heroicon icon, variant: variant, data: { slot: "icon" }, **options
-    end
 
     def initialize(color: :light, style: :solid, **options)
       @color = color
       @style = style
-      @options = options
+      super(**options)
     end
 
-    def merged_options
-      @options[:class] = class_names(@options[:class], yass(headless: { button: [ @color, @style ] }))
-      @options.deep_merge!({
-        onmouseover: "this.setAttribute('data-hover', '')",
-        onmouseout: "this.removeAttribute('data-hover')"
+    def before_render
+      merge_classes!(yass(headless: { button: [ @color, @style ] }))
+
+      merge_options!({
+        onmouseenter: "this.setAttribute('data-hover', '')",
+        onmouseleave: "this.removeAttribute('data-hover'); this.removeAttribute('data-active')",
+        onmousedown: "this.setAttribute('data-active', '')",
+        onmouseup: "this.removeAttribute('data-active')",
+        onfocus: "Headless.elementFocus(this)",
+        onblur: "Headless.elementBlur(this)"
       })
-
-      @options
-    end
-
-    def render_icon
-      if icon.present?
-        icon.to_s
-      end
     end
 
     def call
-      tag.button(**merged_options) do
-        render(TouchTargetComponent.new) + content + render_icon
+      tag.button(**@options) do
+        TouchTargetComponent.new
+        content
       end
     end
 
     class TouchTargetComponent < ApplicationComponent
       jsx_mapping file: "button", component: "TouchTarget"
 
+      def render?
+        classes.present?
+      end
+
+      def classes
+        yass(skip_base: true, headless: { button: :touchtarget })
+      end
+
       def call
-        tag.span(class: yass(skip_base: true, headless: { button: :touchtarget }))
+        tag.span(class: classes, aria: { hidden: true })
       end
     end
   end

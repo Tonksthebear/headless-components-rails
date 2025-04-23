@@ -26,5 +26,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "mini_racer"
   spec.add_dependency "rails_heroicon"
   spec.add_dependency "classy-yaml", ">= 1.4"
+  spec.add_dependency "stimulus-rails"
+  spec.add_dependency "turbo-rails"
+  spec.add_dependency "importmap-rails"
   spec.add_development_dependency "lookbook", ">= 2.3.8"
 end

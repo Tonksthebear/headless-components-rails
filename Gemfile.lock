@@ -3,9 +3,12 @@ PATH
   specs:
     headless-components-rails (0.1.0)
       classy-yaml (>= 1.4)
+      importmap-rails
       mini_racer
       rails (>= 7)
       rails_heroicon
+      stimulus-rails
+      turbo-rails
       view_component
 
 GEM
@@ -100,6 +103,8 @@ GEM
       addressable
     date (3.4.1)
     drb (2.2.1)
+    erb-formatter (0.7.3)
+      syntax_tree (~> 6.0)
     erubi (1.13.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -184,6 +189,7 @@ GEM
       racc
     pp (0.6.2)
       prettyprint
+    prettier_print (1.2.1)
     prettyprint (0.2.0)
     propshaft (1.1.0)
       actionpack (>= 7.0.0)
@@ -286,6 +292,8 @@ GEM
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.6)
+    syntax_tree (6.2.0)
+      prettier_print (>= 1.2.0)
     tailwindcss-rails (4.2.1)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
@@ -298,6 +306,9 @@ GEM
     tailwindcss-ruby (4.0.17-x86_64-linux-musl)
     thor (1.3.2)
     timeout (0.4.3)
+    turbo-rails (2.0.13)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -328,6 +339,7 @@ PLATFORMS
 
 DEPENDENCIES
   classy-yaml
+  erb-formatter
   headless-components-rails!
   importmap-rails (~> 2.1)
   lookbook (>= 2.3.8)
@@ -338,6 +350,7 @@ DEPENDENCIES
   sqlite3
   stimulus-rails (~> 1.3)
   tailwindcss-rails (~> 4.2)
+  turbo-rails
   view_component
 
 BUNDLED WITH

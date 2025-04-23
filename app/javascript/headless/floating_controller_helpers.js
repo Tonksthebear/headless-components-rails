@@ -1,26 +1,12 @@
 import { setupFloating } from "headless/floating"
 
 export const floatingControllerHelpers = {
-  // Extra values to append to static values
-  values: {
-    anchorTo: String,
-    anchorGap: String,
-    anchorOffset: String,
-    anchorPadding: String,
-  },
-
   setupFloating({ reference, floating, config = {} }) {
-    const valueConfig = {
-      placement: this.hasAnchorToValue ? this.anchorToValue : 'bottom center',
-      offset: this.hasAnchorOffsetValue ? this.anchorOffsetValue : undefined,
-      padding: this.hasAnchorPaddingValue ? this.anchorPaddingValue : undefined,
-    }
-
     this.cleanupNewFloating = setupFloating({
       reference,
       floating,
       config: {
-        ...valueConfig,
+        ...this.anchorConfig(floating),
         ...config
       }
     })
@@ -32,7 +18,16 @@ export const floatingControllerHelpers = {
     }
   },
 
-  hasAnchor() {
-    return (this.anchorToValue + this.anchorGapValue + this.anchorOffsetValue + this.anchorPaddingValue) !== ''
+  hasAnchor(element) {
+    return (element.getAttribute("anchor") + element.getAttribute("anchor-to") + element.getAttribute("anchor-gap") + element.getAttribute("anchor-offset") + element.getAttribute("anchor-padding")) != ''
+  },
+
+  anchorConfig(element) {
+    return {
+      placement: this.stringOrNull(element.dataset.anchorTo || element.getAttribute("anchor")),
+      gap: this.stringOrNull(element.dataset.anchorGap),
+      offset: this.stringOrNull(element.dataset.anchorOffset),
+      padding: this.stringOrNull(element.dataset.anchorPadding),
+    }
   }
 }

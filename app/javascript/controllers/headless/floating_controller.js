@@ -1,9 +1,9 @@
-import { Controller } from "@hotwired/stimulus"
+import ApplicationController from "controllers/headless/application_controller"
 import { createFloating } from "headless/floating"
 import { createInteractions } from "headless/interactions"
 import { createInnerMiddleware } from "headless/inner"
 
-export default class extends Controller {
+export default class extends ApplicationController {
   static targets = ["reference", "floating"]
   static values = {
     open: { type: Boolean, default: false },
