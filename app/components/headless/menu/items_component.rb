@@ -5,14 +5,14 @@ module Headless
       attr_reader :static, :unmount, :anchor_to, :anchor_gap, :anchor_offset, :anchor_padding
 
       renders_many :items, types: {
-        button: -> (text = nil, **arguments) do
+        button: ->(text = nil, **arguments) do
           if text.present?
             Headless::Menu::ItemComponent.new(type: :button, **arguments).with_content(text)
           else
             Headless::Menu::ItemComponent.new(type: :button, **arguments)
           end
         end,
-        link: -> (*link_arguments, **arguments) do
+        link: ->(*link_arguments, **arguments) do
           if link_arguments.length === 1
             arguments[:href] = link_arguments.first
             Headless::Menu::ItemComponent.new(type: :a, **arguments)
@@ -21,7 +21,7 @@ module Headless
             Headless::Menu::ItemComponent.new(type: :a, **arguments).with_content(link_arguments.first)
           end
         end,
-        shortcut: -> (**arguments) do
+        shortcut: ->(**arguments) do
           Headless::MenuComponent::ShortcutComponent.new(**arguments)
         end
       }

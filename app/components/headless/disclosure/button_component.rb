@@ -12,7 +12,7 @@ module Headless
             open: @default_open ? "true" : nil,
             headless__disclosure_target: "button",
             action: "
-              click->headless--transition#toggle 
+              click->headless--transition#toggle
             "
           }
         })

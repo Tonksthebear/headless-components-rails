@@ -3,7 +3,7 @@ module Headless
     class SectionComponent < ApplicationComponent
       attr_reader :name
 
-      renders_one :heading, -> (**options) do
+      renders_one :heading, ->(**options) do
         options[:id] = @name
         Headless::Menu::HeadingComponent.new(**options)
       end

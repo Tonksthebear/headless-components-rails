@@ -2,8 +2,8 @@ module Headless
   class MenuComponent < ApplicationComponent
     attr_reader :open, :disabled, :anchor, :portal
     renders_one :button, Headless::Menu::ButtonComponent
-    renders_one :items, ->(**options) do  
-      Headless::Menu::ItemsComponent.new(items_id: @menu_id, **options) 
+    renders_one :items, ->(**options) do
+      Headless::Menu::ItemsComponent.new(items_id: @menu_id, **options)
     end
 
     def initialize(open: false, disabled: false, anchor: {}, portal: false, **options)
