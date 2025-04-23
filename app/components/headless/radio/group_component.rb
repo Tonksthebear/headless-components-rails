@@ -3,12 +3,15 @@
 module Headless
   module Radio
     class GroupComponent < ApplicationComponent
+      attr_reader :id
+
       renders_many :radios, ->(value, **radio_options) do
         RadioComponent.new(@name, value, **radio_options)
       end
 
       def initialize(as: :div, **options)
         @as = as
+        @id = options[:id]
         @name = options[:name] || "radio-group-#{object_id}"
         super(**options)
       end

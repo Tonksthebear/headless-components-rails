@@ -2,7 +2,10 @@
 
 module Headless
   class SelectComponent < ApplicationComponent
+    attr_reader :id
+
     def initialize(**options)
+      @id = options[:id]
       super(**options)
     end
 

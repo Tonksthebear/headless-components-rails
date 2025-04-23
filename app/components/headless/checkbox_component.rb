@@ -3,7 +3,7 @@
 module Headless
   class CheckboxComponent < ApplicationComponent
     jsx_mapping file: "checkbox", component: "Checkbox"
-
+    attr_reader :id
     erb_template <<~ERB
       <%= tag.span(**@options) do %>
         <%= checkbox_tag @options[:name], checked: @options[:checked], class: "sr-only", **checkbox_options %>
@@ -15,6 +15,7 @@ module Headless
       options[:checked] ||= default_checked
       options[:value] ||= value
       options[:name] ||= "checkbox-#{object_id}"
+      @id = options[:id]
       super(**options)
     end
 

@@ -19,6 +19,7 @@ export default class DisabledObserver {
   constructor(target, callbacks) {
     this.target = target
     this.callbacks = callbacks
+    this.started = false
     this.observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" && mutation.attributeName === "disabled") {
@@ -37,14 +38,38 @@ export default class DisabledObserver {
    * Starts observing the target element for disabled attribute changes
    */
   start() {
-    this.observer.observe(this.target, { attributes: true, attributeFilter: ["disabled"], subtree: true })
+    if (!this.started) {
+      this.observer.observe(this.target, { attributes: true, attributeFilter: ["disabled"], subtree: true })
+      this.started = true
+    }
   }
 
   /**
    * Stops observing the target element
    */
   stop() {
-    this.observer.disconnect()
+    if (this.started) {
+      this.observer.disconnect()
+      this.started = false
+    }
+  }
+
+  /**
+   * Pauses the observer and calls the callback when the observer is resumed
+   * @param {Function} callback - The callback to call when the observer is resumed
+   */
+  pause(callback) {
+    if (this.started) {
+      this.observer.disconnect()
+      this.started = false
+    }
+
+    callback()
+
+    if (!this.started) {
+      this.observer.observe(this.target, { attributes: true, attributeFilter: ["disabled"], subtree: true })
+      this.started = true
+    }
   }
 }
 

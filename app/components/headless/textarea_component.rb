@@ -3,8 +3,10 @@
 module Headless
   class TextareaComponent < ApplicationComponent
     jsx_mapping file: "checkbox", component: "Checkbox"
+    attr_reader :id
 
     def initialize(**options)
+      @id = options[:id]
       super(**options)
     end
 
