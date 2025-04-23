@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Headless
-  class CheckboxComponent < ApplicationComponent
-    jsx_mapping file: "checkbox", component: "Checkbox"
+  class SwitchComponent < ApplicationComponent
+    jsx_mapping file: "switch", component: "Switch"
 
     erb_template <<~ERB
       <%= tag.span(**@options) do %>
@@ -14,7 +14,7 @@ module Headless
     def initialize(default_checked: false, value: nil, **options)
       options[:checked] ||= default_checked
       options[:value] ||= value
-      options[:name] ||= "checkbox-" + object_id
+      options[:name] ||= "switch-" + object_id
       super(**options)
     end
 
@@ -30,7 +30,7 @@ module Headless
     def before_render
       merge_options!({
         tabindex: 0,
-        role: "checkbox",
+        role: "switch",
         onkeydown: "Headless.checkboxKeydown(event, this)",
         onfocus: "Headless.elementFocus(this)",
         onblur: "Headless.elementBlur(this)",
