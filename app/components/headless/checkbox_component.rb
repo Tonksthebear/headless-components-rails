@@ -20,7 +20,7 @@ module Headless
 
     def checkbox_options
       {
-        onchange: "Headless.checkboxChanged(event, this)",
+        onchange: "Headless.checkboxChanged(this)",
         name: @options[:name] || nil,
         disabled: @options[:disabled] || nil,
         value: @options[:value] || nil

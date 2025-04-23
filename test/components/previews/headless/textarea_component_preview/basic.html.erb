@@ -1,0 +1,13 @@
+<div class="bg-black h-full w-full">
+  <div class="relative min-h-full antialiased">
+    <div class="relative bg-white/5">
+      <div class="absolute inset-[35%] block rounded-full bg-white/15 blur-2xl" aria-hidden="true" inert=""></div>
+      <div class="relative flex min-h-screen w-full flex-col items-center justify-center">
+        <%= render Headless::TextareaComponent.new(
+          class:
+            "mt-3 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25",
+        ) %>
+      </div>
+    </div>
+  </div>
+</div>

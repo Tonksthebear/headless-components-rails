@@ -2,7 +2,7 @@ import { nextFrame } from "headless/animation_helpers"
 
 window.Headless = {
   elementFocus: (element) => {
-    if (element.matches(':focus-visible')) {
+    if (element.matches(':focus-visible') || Headless.isKeyboardInput) {
       element.setAttribute('data-focus', "")
     }
   },
@@ -30,7 +30,7 @@ window.Headless = {
     element.removeAttribute('data-active')
   },
 
-  checkboxChanged: async (event, element) => {
+  checkboxChanged: async (element) => {
     element.parentElement.setAttribute('aria-checked', element.checked)
     if (element.checked) {
       element.parentElement.setAttribute('data-checked', "")
@@ -59,5 +59,27 @@ window.Headless = {
         form.requestSubmit()
       }
     }
-  }
+  },
+
+  checkKeyboardInput: ({ key }) => {
+    if (event.key === 'ArrowDown' || key === 'ArrowUp' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Tab') {
+      Headless.isKeyboardInput = true
+    }
+  },
+
+  unsetKeyboardInput: () => {
+    Headless.isKeyboardInput = false
+  },
+
+  isKeyboardInput: false,
 }
+
+document.addEventListener("turbo:load", () => {
+  document.addEventListener("keydown", Headless.checkKeyboardInput, true)
+  document.addEventListener("mousedown", Headless.unsetKeyboardInput)
+})
+
+document.addEventListener("turbo:before-cache", () => {
+  document.removeEventListener("keydown", Headless.checkKeyboardInput, true)
+  document.removeEventListener("mousedown", Headless.unsetKeyboardInput)
+})
