@@ -14,7 +14,7 @@ module Headless
     def initialize(default_checked: false, value: nil, **options)
       options[:checked] ||= default_checked
       options[:value] ||= value
-      options[:name] ||= "checkbox-" + object_id
+      options[:name] ||= "checkbox-#{object_id}"
       super(**options)
     end
 
