@@ -370,6 +370,7 @@ export default class ComboboxState {
       this.setActiveIndexByOption(this.activeOption)
     } else {
       this.activeIndex = -1
+      this.controller.optionsTarget.removeAttribute("aria-activedescendant")
     }
   }
 
@@ -449,6 +450,7 @@ export default class ComboboxState {
     if (this.activeOption === option) {
       this.activeOption = null
       this.activeIndex = -1
+      this.controller.optionsTarget.removeAttribute("aria-activedescendant")
     }
   }
 
@@ -632,6 +634,8 @@ export default class ComboboxState {
     option.setAttribute("data-focus", "")
     option.setAttribute("data-hover", "")
     option.setAttribute("data-active", "")
+
+    this.controller.optionsTarget.setAttribute("aria-activedescendant", option.id)
   }
 
   unsetOptionActive(option) {

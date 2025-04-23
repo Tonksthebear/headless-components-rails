@@ -115,6 +115,8 @@ export default class extends ApplicationController {
   focusItem(item) {
     item.setAttribute("data-focus", "")
     item.setAttribute("data-active", "")
+
+    this.itemsTarget.setAttribute("aria-activedescendant", item.id)
   }
 
   focus({ currentTarget }) {
