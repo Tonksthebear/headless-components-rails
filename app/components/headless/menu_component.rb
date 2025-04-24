@@ -6,7 +6,7 @@ module Headless
       Headless::Menu::ItemsComponent.new(items_id: @menu_id, **options)
     end
 
-    def initialize(open: false, disabled: false, anchor: {}, portal: false, **options)
+    def initialize(open: false, disabled: false, anchor: "", portal: false, **options)
       options[:id] = options[:id] || "menu-#{object_id}"
       @menu_id = options[:id]
       @open = open
@@ -23,7 +23,7 @@ module Headless
           controller: "headless--transition headless--menu",
           headless__menu_open_at_start_value: @open,
           headless__menu_portal_value: @portal,
-          headless__menu_anchor_to_value: @anchor[:to],
+          headless__menu_anchor_to_value: @anchor,
           headless__menu_headless__portal_outlet: "[data-headless-portal-id='#{@menu_id}']",
           headless__menu_headless__transition_outlet: "##{@menu_id}",
           headless__transition_headless__portal_outlet: "[data-headless-portal-id='#{@menu_id}']",
