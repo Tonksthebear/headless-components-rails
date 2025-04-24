@@ -12,7 +12,7 @@ module Headless
       end
 
       def call
-        tag.div(**options)
+        tag.div(**@options)
       end
     end
   end

@@ -1,9 +1,14 @@
 module Headless
   class MenuComponent < ApplicationComponent
     attr_reader :open, :disabled, :anchor, :portal
-    renders_one :button, Headless::Menu::ButtonComponent
-    renders_one :items, ->(**options) do
-      Headless::Menu::ItemsComponent.new(items_id: @menu_id, **options)
+    renders_one :button, ->(**button_options) do
+      button_options[:aria] ||= {}
+      button_options[:aria][:controls] = @menu_id
+      button_options[:aria][:haspopup] = "menu"
+      Headless::Menu::ButtonComponent.new(**button_options)
+    end
+    renders_one :items, ->(**items_options) do
+      Headless::Menu::ItemsComponent.new(items_id: @menu_id, **items_options)
     end
 
     def initialize(open: false, disabled: false, anchor: "", portal: false, **options)

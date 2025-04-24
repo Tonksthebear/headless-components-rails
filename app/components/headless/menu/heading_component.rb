@@ -14,7 +14,7 @@ module Headless
       end
 
       def call
-        content_tag(:header, content, **options)
+        content_tag(:header, content, **@options)
       end
     end
   end

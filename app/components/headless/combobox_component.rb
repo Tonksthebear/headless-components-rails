@@ -65,6 +65,8 @@ module Headless
             keydown.end->headless--combobox#focusLastOption:prevent
             keydown.page_down->headless--combobox#focusLastOption:prevent
             keydown.esc->headless--combobox#clearInput:prevent
+            keydown.esc->headless--combobox#close:prevent
+            click@document->headless--combobox#checkOutside
           "
         }
       })

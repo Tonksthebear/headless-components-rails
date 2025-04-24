@@ -3,9 +3,9 @@ module Headless
     class SectionComponent < ApplicationComponent
       attr_reader :name
 
-      renders_one :heading, ->(**options) do
-        options[:id] = @name
-        Headless::Menu::HeadingComponent.new(**options)
+      renders_one :heading, ->(**heading_options) do
+        heading_options[:id] = @name
+        Headless::Menu::HeadingComponent.new(**heading_options)
       end
 
       def initialize(name: self.object_id, **options)
@@ -19,7 +19,7 @@ module Headless
       end
 
       def call
-        tag.div(**options) do
+        tag.div(**@options) do
           content
         end
       end
