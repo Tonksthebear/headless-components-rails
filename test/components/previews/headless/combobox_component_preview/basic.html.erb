@@ -3,7 +3,7 @@
     <div class="relative bg-white/5">
       <div class="absolute inset-[35%] block rounded-full bg-white/15 blur-2xl" aria-hidden="true" inert=""></div>
       <div class="mx-auto h-screen w-52 pt-20">
-        <%= render Headless::ComboboxComponent.new(immediate: true) do |combobox| %>
+        <%= render Headless::ComboboxComponent.new(immediate: true, default_value: ["2"]) do |combobox| %>
           <%= combobox.with_filter do %>
             this.filteredOptions =
              this.query === ''

@@ -32,6 +32,7 @@ export default class ComboboxState {
     this.newlySelectedOption = null
     this.newlyDeselectedOption = null
     this.immediate = controller.immediateValue
+    this.transitioning = false
 
     // Store callbacks
     this.onSelectedChange = callbacks.onSelectedChange || (() => { })
@@ -111,7 +112,9 @@ export default class ComboboxState {
   // State-specific handlers
   async handleClosedState() {
     // Close the dropdown
+    this.transitioning = true
     await this.controller.headlessTransitionOutlet.leave()
+    this.transitioning = false
 
     // Update attributes for closed state
     this.controller.element.removeAttribute("data-open")
@@ -133,7 +136,9 @@ export default class ComboboxState {
       this.controller.inputTarget.focus()
     }
 
+    this.transitioning = true
     await this.controller.headlessTransitionOutlet.enter()
+    this.transitioning = false
 
     // Update attributes for open state
     this.controller.element.setAttribute("data-open", "")

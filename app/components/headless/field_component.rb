@@ -62,6 +62,7 @@ module Headless
       @as = as
       options[:id] ||= "field-#{object_id}"
       @input_id = ""
+      @render_controller = render_controller
       super(**options)
     end
 
@@ -73,7 +74,6 @@ module Headless
     end
 
     def before_render
-      # preload_procs
       merge_options!({
         aria: {
           disabled: @options[:disabled] || nil

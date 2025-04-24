@@ -81,12 +81,21 @@ bin/rails headless:install
 
 This will install a default `config/headless.yml` with basic styles that Headless UI provides. Don't forget, this can be overridden with your premium Catalyst styles for Tailwind Plus customers.
 
+You will also need to include the library's index.js in your application.js with the follow:
+```js
+// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
+import "@hotwired/turbo-rails"
+import "controllers"
+import "headless"
+
+```
+
 For Tailwind v4 configuration
 ```css
 @import "tailwindcss";
 
 # Used for forcing certain animations into hidden state
-@source inline("!hidden");
+@source inline("!hidden sr-only");
 
 # May need to change the relative location of where config/headless.yml is relative to your stylesheet
 @source "../../config/headless.yml";

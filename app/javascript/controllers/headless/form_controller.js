@@ -71,7 +71,7 @@ export default class extends ApplicationController {
   }
 
   #updateFieldsetDescribedBy() {
-    if (!this.fieldsetTarget) return
+    if (!this.hasFieldsetTarget || !this.fieldsetTarget) return
     const describedBy = this.descriptionTargets.map((target) => target.id).join(" ")
     this.fieldsetTarget.setAttribute("aria-describedby", describedBy)
   }

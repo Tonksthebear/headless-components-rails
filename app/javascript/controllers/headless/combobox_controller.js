@@ -8,7 +8,7 @@ export default class extends ApplicationController {
   static outlets = ["headless--portal", "headless--transition"]
   static values = {
     value: { type: Array, default: [] },
-    defaultValue: Array,
+    defaultValue: { type: Array, default: [] },
     multiple: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     open: { type: Boolean, default: false },
@@ -56,6 +56,15 @@ export default class extends ApplicationController {
       this.state.open()
     } else {
       this.state.close()
+    }
+
+    if (this.hasDefaultValues) {
+      this.defaultValues.forEach(value => {
+        const option = this.options.find(option => option.dataset.value === value)
+        if (option) {
+          this.selectOption({ currentTarget: option })
+        }
+      })
     }
   }
 
@@ -168,6 +177,14 @@ export default class extends ApplicationController {
 
   updateOptions() {
     this.state.updateOptions()
+  }
+
+  checkOutside({ currentTarget }) {
+    if (!this.element.contains(currentTarget) && !this.headlessPortalOutlet.element.contains(currentTarget)) {
+      if (this.state.isOpen && !this.state.transitioning) {
+        this.close()
+      }
+    }
   }
 
   #elementSizeChanged(element, newSize) {

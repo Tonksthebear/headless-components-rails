@@ -4,8 +4,8 @@
     <div class="relative bg-white/5">
       <div class="absolute inset-[35%] block rounded-full bg-white/15 blur-2xl" aria-hidden="true" inert=""></div>
       <div class="relative flex min-h-screen w-full flex-col items-center justify-center">
-        <%= render Headless::ButtonComponent.new(class: "rounded-md bg-black/20 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-black/30 data-[focus]:outline-1 data-[focus]:outline-white", data: { modal: "test" }).with_content("Open Dialog") %>
         <%= render Headless::DialogComponent.new(id: "test", class: "relative z-50") do |dialog| %>
+          <%= render dialog.with_button(class: "rounded-md bg-black/20 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-black/30 data-[focus]:outline-1 data-[focus]:outline-white").with_content("Open Dialog") %>
           <%= dialog.with_backdrop(class: "fixed inset-0 bg-black/30 duration-300 ease-out data-[closed]:opacity-0") %>
           <div class="fixed inset-0 flex w-screen items-center justify-center p-4">
             <%= dialog.with_panel(class: "w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0") do |panel| %>

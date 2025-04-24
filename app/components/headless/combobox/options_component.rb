@@ -1,9 +1,10 @@
 module Headless
   module Combobox
     class OptionsComponent < ApplicationComponent
-      def initialize(as: :div, open: false, **options)
+      def initialize(as: :div, open: false, portal_id: nil, **options)
         @as = as
         @open = open
+        @portal_id = portal_id
         super(**options)
       end
 
@@ -12,9 +13,10 @@ module Headless
           tabindex: "-1",
           role: "listbox",
           data: {
+            controller: "headless--portal",
             headless__combobox_target: "options",
             headless__transition_target: "child",
-            portal_id: @options[:portal_id],
+            portal_id: @portal_id,
             hide_after_transition: ""
           }
         })
