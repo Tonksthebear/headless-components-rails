@@ -9,32 +9,7 @@ It aims to offer a seamless way to integrate the highly-regarded Headless UI pat
 
 This gem translates the original React components from Headless UI into a Ruby and Stimulus combination, making them idiomatic for the Rails ecosystem.
 
-Currently, the primary focus has been on implementing the **Dropdown Menu** component. I haven't spent time developing base styling for those without Tailwind Plus, but I included preliminary basic ones. This initial implementation served as a proving ground for handling complex UI interactions, including:
-*   Integration with libraries like Floating UI for positioning.
-*   A custom Stimulus-based portaling mechanism (see `app/javascript/controllers/headless/portal_controller.js`) to manage elements rendered outside the main component DOM structure, mimicking concepts like React Portals without leaving Stimulus.
-
-## Menu Component Example
-```erb
-  <%= render Headless::MenuComponent.new do |menu| %>
-    <% menu.with_button do |button| %>
-      Options
-      <% button.with_icon(icon: "chevron-down") %>
-    <% end %>
-
-    <% menu.with_items do |items| %>
-      <% items.with_item do %>
-        View
-      <% end %>
-      <% items.with_item do %>
-        Edit
-      <% end %>
-      <% items.with_item(disabled: true) do %>
-        Delete
-      <% end %>
-    <% end %>
-  <% end %>
-```
-![Menu Component](docs/images/menu_component_1.png)
+You can preview live demos and sample code [here](https://headless-components-rails.onrender.com).
 
 
 ## Catalyst Integration
@@ -71,7 +46,7 @@ The aim is to follow the original Headless UI API as closely as possible. It wil
 As this is currently a proof of concept, install it directly from GitHub. **It also assume your project has importmaps, stimulus, ViewComponent, and tailwind installed. It is not validating for this yet, so please be sure you have them installed.** Add this line to your application's Gemfile:
 
 ```ruby
-gem "headless", git: "https://github.com/Tonksthebear/headless-components-rails.git"
+gem "headless-components-rails", git: "https://github.com/Tonksthebear/headless-components-rails.git"
 ```
 
 And then execute:
