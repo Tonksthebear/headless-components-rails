@@ -27,6 +27,10 @@ export default class extends ApplicationController {
     }
   }
 
+  disconnect() {
+    if (this.modalValue) unlockScroll()
+  }
+
   headlessPortalOutletConnected(controller) {
     controller.sync(this)
   }

@@ -7,7 +7,7 @@ export default class extends ApplicationController {
   static outlets = ["headless--portal"]
 
   static values = {
-    autoFocus: { type: Boolean, default: false }
+    autoFocus: { type: Boolean, default: false },
   }
 
   connect() {
@@ -16,6 +16,7 @@ export default class extends ApplicationController {
 
   disconnect() {
     this.retrievePortal()
+    unlockScroll()
   }
 
   headlessPortalOutletConnected(controller) {
