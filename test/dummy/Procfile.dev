@@ -1,2 +1,3 @@
-web: bin/rails server
+caddy: caddy run
+web: bin/rails s -p 3100
 css: bin/rails tailwindcss:watch

@@ -17,8 +17,7 @@ module Headless
           data: {
             hide_after_transition: "",
             headless__dialog_target: "backdrop",
-            headless__transition_target: "child",
-            action: "click->headless--dialog#close"
+            headless__transition_target: "child"
           }
         })
       end

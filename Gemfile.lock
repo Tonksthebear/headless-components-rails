@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    headless-components-rails (0.5.2)
+    headless-components-rails (0.5.5)
       classy-yaml (>= 1.4)
       importmap-rails
       mini_racer

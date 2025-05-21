@@ -1,0 +1,4 @@
+localhost
+
+reverse_proxy /ws localhost:3100
+reverse_proxy localhost:3100
