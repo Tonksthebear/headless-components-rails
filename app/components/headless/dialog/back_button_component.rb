@@ -8,7 +8,7 @@ module Headless
       def before_render
         merge_options!({
           data: {
-            action: "headless--transition#leave"
+            action: "headless--dialog#close"
           }
         })
         super

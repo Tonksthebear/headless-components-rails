@@ -4,10 +4,11 @@ import { getAllFocusableElements } from "headless/focus_locking_helpers"
 
 export default class extends ApplicationController {
   static targets = ["dialog", "backdrop", "panel", "title"]
-  static outlets = ["headless--portal"]
+  static outlets = ["headless--portal", "headless--transition"]
 
   static values = {
-    autoFocus: { type: Boolean, default: false },
+    autofocus: { type: Boolean, default: false },
+    startOpen: { type: Boolean, default: false }
   }
 
   connect() {
@@ -16,11 +17,29 @@ export default class extends ApplicationController {
 
   disconnect() {
     this.retrievePortal()
+    this.#removeFromStack()
     unlockScroll()
   }
 
+  open() {
+    this.sendPortal()
+    this.opened()
+    this.headlessTransitionOutlet.enter()
+  }
+
+  async close() {
+    await this.headlessTransitionOutlet.leave()
+    this.retrievePortal()
+    this.closed()
+  }
+
   headlessPortalOutletConnected(controller) {
-    controller.sync(this)
+    controller.sync(this).then(() => {
+      if (this.startOpenValue) {
+        this.startOpenValue = false
+        this.open()
+      }
+    })
   }
 
   headlessPortalOutletDisconnected(controller) {
@@ -33,7 +52,7 @@ export default class extends ApplicationController {
     this.hasBackdropTarget && this.backdropTarget.setAttribute("data-open", "")
     this.panelTarget.setAttribute("data-open", "")
     this.hasTitleTarget && this.titleTarget.setAttribute("data-open", "")
-    this.autofocusValue && this.panelTarget.focus()
+    this.autofocusValue && this.headlessPortalOutlet.element.focus()
     this.#addToStack()
     lockScroll()
   }
@@ -59,11 +78,12 @@ export default class extends ApplicationController {
   documentClicked({ target }) {
     if (this.#currentDialog()) {
       if (target != this.panelTarget && !this.panelTarget.contains(target)) {
-        this.dispatch("leave")
+        this.close()
       }
     } else {
-      if (target.matches(`[data-modal="${this.element.id}"]`)) {
-        this.dispatch("enter")
+      const dialogTarget = target.closest("[data-dialog]")
+      if (dialogTarget && dialogTarget.dataset.dialog == this.element.id) {
+        this.open()
       }
     }
   }

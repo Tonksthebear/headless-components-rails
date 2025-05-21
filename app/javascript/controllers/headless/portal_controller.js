@@ -25,7 +25,7 @@ export default class extends Controller {
     }
   }
 
-  sync(controller) {
+  async sync(controller) {
     const identifier = controller.scope.identifier
     this.valueListObserver?.refresh()
 
@@ -40,7 +40,7 @@ export default class extends Controller {
     this.portaledIdentifiers[identifier].valueListObserver?.start()
   }
 
-  desync(controller) {
+  async desync(controller) {
     const identifier = controller.scope.identifier
     if (this.portaledIdentifiers[identifier]) {
       if (this.portaledIdentifiers[identifier].controllers.has(controller)) {
