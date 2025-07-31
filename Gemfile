@@ -24,4 +24,4 @@ gem "propshaft"
 gem "stimulus-rails", "~> 1.3"
 gem "turbo-rails"
 
-gem "importmap-rails", "~> 2.1"
+gem "importmap-rails", "~> 2.2"
